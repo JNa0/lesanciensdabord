@@ -1,0 +1,147 @@
+<%- include("objetForEach") %>
+<%- include("tête", {
+	"titre": "Inscription · Les anciens d’abord",
+}) -%>
+<%- include("en‐tête", {
+	"estConnecté": false,
+}) -%>
+		<main>
+			<nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
+				<ul>
+					<li>
+						<a href="/">
+							Accueil
+						</a>
+					</li>
+					<li>
+						<a href="/inscription">
+							Inscription
+						</a>
+					</li>
+					<li class="is-active">
+						<a aria-current="page">
+							Membre
+						</a>
+					</li>
+				</ul>
+			</nav>
+
+			<section class="container">
+				<h1 class="title is-3 has-text-centered">
+					Un nouveau !
+				</h1>
+				<form action="/connexion" method="POST">
+					<div class="field">
+						<label class="label" for="prénom">
+							Prénom
+						</label>
+						<div class="control">
+							<input class="input" type="text" required="required" name="prénom" id="prénom" placeholder="Prénom…">
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="nom">
+							Nom
+						</label>
+						<div class="control">
+							<input class="input" type="text" required="required" name="nom" id="nom" placeholder="Nom…">
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label">
+							Civilité
+						</label>
+						<div class="control has-text-centered">
+							<input class="is-checkradio" type="radio" required="required" name="civilité" id="madame">
+							<label class="radio" for="madame">
+								Madame
+							</label>
+							<input class="is-checkradio" type="radio" required="required" name="civilité" id="monsieur">
+							<label class="radio" for="monsieur">
+								Monsieur
+							</label>
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="dateNaissance">
+							Date de naissance
+						</label>
+						<div class="control">
+							<input class="input" type="date" required="required" name="dateNaissance" id="dateNaissance" data-is-range="" />
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="adresseMél">
+							Adresse mél
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-envelope"></i>
+							</span>
+							<input class="input" type="email" required="required" name="adresseMél" id="adresseMél" placeholder="Adresse mél…">
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="statut">
+							Je suis…
+						</label>
+						<div class="control">
+							<div class="select">
+								<select required="required" name="statut" id="statut">
+									<option value="" selected="selected">Choisissez votre statut</option>
+									<option value="0">Ancien·ne étudiant·e</option>
+									<option value="1">Étudiant·e</option>
+									<option value="2">Enseignant·e</option>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<div class="field">
+						<div class="control">
+							<input class="is-checkradio" type="checkbox" name="traitementDonnéesPersonnelles" id="traitementDonnéesPersonnelles">
+							<label class="checkbox" for="traitementDonnéesPersonnelles">
+								J’autorise le traitement de mes données personnelles
+							</label>
+						</div>
+					</div>
+
+					<div class="field">
+						<div class="control">
+							<input class="is-checkradio" type="checkbox" name="traitementDonnéesProfessionnelles" id="traitementDonnéesProfessionnelles">
+							<label class="checkbox" for="traitementDonnéesProfessionnelles">
+								J’autorise le traitement de mes données professionnelles
+							</label>
+						</div>
+					</div>
+
+					<div class="content">
+						<p class="text has-text-centered">
+							Votre compte sera mis en attente de validation.
+							<br />
+							Un mot de passe vous sera fourni, vous devrez le changer.
+						</p>
+					</div>
+
+					<div class="field is-grouped is-grouped-centered">
+						<div class="control">
+							<button class="button is-link">Valider</button>
+						</div>
+					</div>
+				</form>
+
+				<hr class="hr" />
+
+				<div class="section has-text-centered">
+					<a class="button is-primary" href="/connexion">
+						Me connecter
+					</a>
+				</div>
+			</section>
+		</main>
+<%- include("pied") %>

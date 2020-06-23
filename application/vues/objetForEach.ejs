@@ -1,0 +1,17 @@
+<%
+
+	if (!Object.prototype.forEach)
+		Object.defineProperty(Object.prototype, "forEach", {
+			value: function (fonctionRappel) {
+				if (this === null)
+					throw new TypeError("cannot call method forEach on null object")
+
+				let argumentThis = this || window
+
+				for (clé in this)
+					if (this.hasOwnProperty(clé))
+						fonctionRappel.call(argumentThis, this[clé], clé, this)
+			}
+		})
+
+%>

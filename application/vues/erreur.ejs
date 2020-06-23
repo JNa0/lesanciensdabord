@@ -1,0 +1,13 @@
+<%- include("tête", {
+	"titre": message,
+	"erreur": true,
+}) -%>
+		<h1>
+			<%= message %>
+		</h1>
+		<h2>
+			<%= erreur.status %>
+		</h2>
+		<pre>
+			<%= erreur.stack %>
+		</pre>

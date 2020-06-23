@@ -1,0 +1,300 @@
+
+:root {
+	--primaire: #00d1b2;
+	--blanc: #fff;
+	--noir: #0a0a0a;
+	--clair: #f5f5f5;
+	--sombre: #363636;
+	--gris: #b5b5b5;
+	--bleu: #3273dc;
+	--cyan: #209cee;
+	--vert: #48c774;
+	--jaune: #ffdd57;
+	--rouge: #ff3860;
+}
+
+* { box-sizing: border-box }
+
+*::before,
+*::after { box-sizing: border-box }
+
+html { background-color: var(--blanc) }
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Helvetica", "Arial", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+@supports (display: grid) {
+	body {
+		display: grid;
+		grid-template-rows: auto 1fr auto;
+	}
+
+	body.erreur {
+		display: flex;
+		flex-direction: column;
+	}
+
+	main {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+	}
+}
+
+header {
+	position: sticky;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1;
+}
+
+header .icon { font-size: 1.5em }
+
+.navbar-burger span { height: 2px }
+
+main {
+	padding: 1rem;
+	margin: 1rem auto;
+}
+
+.fieldset {
+	padding: 1.5rem 1rem;
+	margin-bottom: 1rem;
+	border: 1px solid var(--gris);
+	border-radius: .5rem;
+}
+
+.fieldset > legend {
+	font-weight: bold;
+	padding: .25rem .75rem;
+	margin-bottom: -.5rem;
+	border: 1px solid var(--gris);
+	border-radius: .25rem;
+	background-color: #fff;
+}
+
+.field { padding: .25rem 1rem }
+
+.input,
+.textarea,
+.select > select { border-radius: 0 }
+
+.input:focus,
+.textarea:focus,
+.select select:focus {
+	border-color: #66afe9;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),0 0 8px rgba(102, 175, 233, .6);
+	outline: 0;
+}
+
+.input:invalid,
+.textarea:invalid,
+.select select:invalid {
+	border-color: #e966af;
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(233,175,102,.6);
+	outline: 0;
+}
+
+.select,
+.select > select { width: 100% }
+
+.fiche {
+	max-width: 756px;
+	position: relative;
+}
+
+.plus {
+	font-size: 1.5em;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+}
+
+.plus a { margin: 1rem }
+
+.annuaire {
+	margin-top: 1rem;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.annuaire .card {
+	margin: 1rem;
+	width: calc(50% - 2rem);
+	display: flex;
+	flex-direction: row;
+}
+
+.annuaire .card-image img {
+	width: 250px;
+	height: 250px;
+}
+
+.carte {
+	display: flex;
+	align-items: center;
+}
+
+.annuaire .carte figure { margin-right: .5rem }
+
+.annuaire .carte img {
+	width: 164px;
+	height: 164px;
+	min-width: 164px;
+	min-height: 164px;
+	margin: 1rem 0;
+}
+
+.carte img {
+	margin: 2rem;
+	border: .4rem solid;
+	border-radius: 50%;
+	width: 256px;
+	height: 256px;
+	min-width: 256px;
+	min-height: 256px;
+	/*
+		Si la photographie ne se charge pas
+	*/
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.carte .étudiant { border-color: var(--cyan) }
+.carte .ancien { border-color: var(--vert) }
+.carte .enseignant { border-color: var(--rouge) }
+.carte .organisation { border-radius: 0 }
+
+.carte div {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.is-unspaced + .subtitle { margin-top: -1.25rem }
+.is-unspaced + .text { margin-top: -.75rem }
+
+.title.is-unspacing,
+.subtitle.is-unspacing { margin-bottom: 0 }
+
+.recherche { margin: 2rem 1rem 1rem 1rem }
+
+.liens,
+.villes {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 2rem .5rem 1rem .5rem;
+}
+
+.lien,
+.ville {
+	padding: .75rem .5rem;
+	word-break: break-word;
+}
+
+.offres,
+.formations { margin: 2rem 1rem 1rem 1rem }
+
+.offre,
+.formation {
+	position: relative;
+	margin: 2rem 1rem;
+}
+
+.footer { padding-bottom: 3rem }
+
+.footer { display: flex }
+
+@media only screen and (min-width: 1024px) {
+	/*
+		Pied de page
+	*/
+	.footer { justify-content: space-between }
+}
+
+@media only screen and (max-width: 1023px) {
+	/*
+		Pied de page
+	*/
+	.footer { flex-direction: column }
+	.footer .has-text-left,
+	.footer .has-text-right { text-align: center !important }
+}
+
+@media only screen and (min-width: 769px) {
+	/*
+		Tabulation des textes
+	*/
+	.tab-1 { margin-left: 1.5rem }
+	.tab-2 { margin-left: 3rem }
+	.tab-3 { margin-left: 4.5rem }
+	.tab-4 { margin-left: 6rem }
+
+	/*
+		Affichage des liens et villes en colonnes
+	*/
+	.lien { width: 50% }
+	.ville { width: 33.333% }
+
+	/*
+		La barre gauche des formations et offres n’est que sur ordinateur
+	*/
+	.offre,
+	.formation { padding-left: 4rem }
+
+	.offre::before,
+	.offre::after,
+	.formation::before,
+	.formation::after {
+		content: "";
+		display: block;
+		position: absolute;
+		top: .15rem;
+	}
+
+	.offre::before,
+	.formation::before {
+		left: 1.125rem;
+		width: 1.75rem;
+		height: 1.75rem;
+		border: 1px solid var(--sombre);
+		position: absolute;
+		border-radius: 50%;
+		background-color: var(--blanc);
+		z-index: 2;
+	}
+
+	.offre::after,
+	.formation::after {
+		left: 2rem;
+		height: calc(100% + 2rem);
+		width: 1px;
+		background-color: var(--sombre);
+	}
+
+	.offre:last-child::after,
+	.formation:last-child::after { display: none }
+}
+
+@media only screen and (max-width: 768px) {
+	/*
+		En‐tête de fiche
+	*/
+	.carte { flex-direction: column }
+
+	.carte div { text-align: center }
+
+	/*
+		Affichage des liens et villes en colonnes
+	*/
+	.lien { width: 100% }
+	.ville { width: 50% }
+
+	.liens + .villes { margin-top: 1rem }
+}

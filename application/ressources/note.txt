@@ -1,0 +1,11 @@
+
+Attention !
+
+Les fichiers :
+
+	styles/bulma.calendar.css
+	scripts/bulma.calendar.js
+
+ont été modifiés pour corriger des bogues (nombreux…) dans leur fonctionnement.
+
+Veillez à ne mettre pas à jour les fichiers ou à restaurer les corrections si elles sont toujours nécessaires.

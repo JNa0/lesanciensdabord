@@ -1,0 +1,189 @@
+<%- include("objetForEach") %>
+<%- include("tête", {
+	"titre": "Inscription · Les anciens d’abord",
+}) -%>
+<%- include("en‐tête", {
+	"estConnecté": false,
+}) -%>
+		<main>
+			<nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
+				<ul>
+					<li>
+						<a href="/">
+							Accueil
+						</a>
+					</li>
+					<li>
+						<a href="/annuaire">
+							Annuaire
+						</a>
+					</li>
+					<li class="is-active">
+						<a aria-current="page">
+							Organisations
+						</a>
+					</li>
+				</ul>
+			</nav>
+
+			<section class="container">
+				<h1 class="title is-3 has-text-centered">
+					Annuaire
+				</h1>
+				<form action="/annuaire/membres" method="POST">
+					<label class="label" for="statut">
+						Rechercher…
+					</label>
+
+					<div class="field has-addons">
+						<p class="control">
+							<span class="select">
+								<select name="statut" id="statut">
+									<option value="" selected="selected"></option>
+									<option value="raisonSociale">Raison sociale</option>
+									<option value="ville">Ville du siège social</option>
+								</select>
+							</span>
+						</p>
+						<p class="control">
+							<input class="input" type="text" placeholder="Recherche…">
+						</p>
+					</div>
+
+					<fieldset class="fieldset">
+						<legend>
+							Filtrer…
+						</legend>
+
+						<div class="field">
+							<label class="label" for="statut">
+								Secteur d’activité
+							</label>
+							<div class="control">
+								<div class="select">
+									<select name="statut" id="statut">
+										<option value="" selected="selected"></option>
+										<option value="TIC">TIC</option>
+										<option value="agroalimentaire">Agroalimentaire</option>
+										<option value="banques">Banques et assurances</option>
+										<option value="courrier">Courrier et livraison</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="field">
+							<div class="control">
+								<input class="is-checkradio" type="checkbox" name="offres" id="offres">
+								<label class="checkbox" for="offres">
+									Propose des offres
+								</label>
+							</div>
+						</div>
+					</fieldset>
+
+					<div class="field">
+						<label class="label" for="ordreTri">
+							Tri…
+						</label>
+						<div class="control has-text-centered">
+							<input class="is-checkradio" type="radio" name="ordreTri" id="alphabétique" checked="checked">
+							<label class="radio" for="alphabétique">
+								Alphabétique
+							</label>
+							<input class="is-checkradio" type="radio" name="ordreTri" id="antiAlphabétique">
+							<label class="radio" for="antiAlphabétique">
+								Anti‐alphabétique
+							</label>
+						</div>
+					</div>
+
+					<div class="field is-grouped is-grouped-centered">
+						<div class="control">
+							<button class="button is-link">Valider</button>
+						</div>
+					</div>
+				</form>
+			</section>
+
+			<hr class="hr" />
+
+			<section class="container">
+				<nav class="pagination" role="navigation" aria-label="Pagination">
+					<ul class="pagination-list">
+						<li>
+							<a class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a>
+						</li>
+						<li>
+							<a class="pagination-link" aria-label="Page 2">2</a>
+						</li>
+						<li>
+							<a class="pagination-link" aria-label="Page 3">3</a>
+						</li>
+						<li>
+							<a class="pagination-link" aria-label="Page 4">4</a>
+						</li>
+						<li>
+							<span class="pagination-ellipsis">…</span>
+						</li>
+						<li>
+							<a class="pagination-link" aria-label="Page 15">15</a>
+						</li>
+					</ul>
+				</nav>
+			</section>
+
+			<section class="container content annuaire"><%
+				organisations.forEach(organisation => { %>
+					<div class="card carte has-ribbon-bottom">
+						<div class="card-image">
+							<figure class="image">
+								<img src="https://via.placeholder.com/256" alt="Placeholder image" class="<%= organisation.rôle %>" />
+							</figure>
+						</div>
+						<div class="card-content">
+							<p class="title is-4">
+								<%= organisation.raisonSociale %>
+							</p>
+							<p class="subtitle is-4">
+								<%= organisation.secteurActivité %>
+							</p>
+							<p class="subtitle is-5">
+								<%= organisation.effectif %> salariés
+							</p>
+						</div><%
+
+						if (organisation.offres.length) { %>
+							<div class="ribbon is-medium is-light"><%= organisation.offres.length %> offres</div><%
+						} %>
+					</div>
+					<%
+				}) %>
+			</section>
+
+			<section class="container">
+				<nav class="pagination" role="navigation" aria-label="Pagination">
+					<ul class="pagination-list">
+						<li>
+							<a class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a>
+						</li>
+						<li>
+							<a class="pagination-link" aria-label="Page 2">2</a>
+						</li>
+						<li>
+							<a class="pagination-link" aria-label="Page 3">3</a>
+						</li>
+						<li>
+							<a class="pagination-link" aria-label="Page 4">4</a>
+						</li>
+						<li>
+							<span class="pagination-ellipsis">…</span>
+						</li>
+						<li>
+							<a class="pagination-link" aria-label="Page 15">15</a>
+						</li>
+					</ul>
+				</nav>
+			</section>
+		</main>
+<%- include("pied") %>

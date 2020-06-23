@@ -1,0 +1,47 @@
+<%- include("objetForEach") %>
+<%- include("tête", {
+	"titre": "Annuaire · Les anciens d’abord",
+}) -%>
+<%- include("en‐tête", {
+	"estConnecté": false,
+}) -%>
+		<main>
+			<nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
+				<ul>
+					<li>
+						<a href="/">
+							Accueil
+						</a>
+					</li>
+					<li class="is-active">
+						<a aria-current="page">
+							Annuaire
+						</a>
+					</li>
+				</ul>
+			</nav>
+
+			<section class="container">
+				<div class="box">
+					<a href="/annuaire/membres">
+						<span class="icon is-large">
+							<i class="fas fa-user fa-2x"></i>
+						</span>
+						<span>
+							Chercher un membre
+						</span>
+					</a>
+				</div>
+				<div class="box">
+					<a href="/annuaire/organisations">
+						<span class="icon is-large">
+							<i class="fas fa-building fa-2x"></i>
+						</span>
+						<span>
+							Chercher une organisation
+						</span>
+					</a>
+				</div>
+			</section>
+		</main>
+<%- include("pied") %>

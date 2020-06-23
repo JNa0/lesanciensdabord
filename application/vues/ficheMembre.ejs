@@ -1,0 +1,164 @@
+<%- include("tête", {
+	"titre": prénom + " " + nom + " · Les anciens d’abord",
+}) -%>
+<%- include("en‐tête", {
+	"estConnecté": false,
+}) -%>
+		<main>
+			<nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
+				<ul>
+					<li>
+						<a href="/">
+							Accueil
+						</a>
+					</li>
+					<li>
+						<a href="/annuaire">
+							Annuaire
+						</a>
+					</li>
+					<li>
+						<a href="/annuaire/membres">
+							Membres
+						</a>
+					</li>
+					<li class="is-active">
+						<a aria-current="page">
+							<%= prénom %> <%= nom %>
+						</a>
+					</li>
+				</ul>
+			</nav>
+
+			<section class="container fiche">
+				<div class="plus">
+					<a class="icon is-medium" href="/ressources/cv/<%= nomUtilisateur %>.pdf" title="Voir le CV">
+						<i class="fas fa-file-invoice"></i>
+					</a><%
+					if (true) { %>
+						<a class="icon is-medium" href="<%= URL %>/modifier" title="Modifier les informations">
+							<i class="fas fa-user-edit"></i>
+						</a><%
+					} %>
+				</div>
+				<div class="carte">
+					<img src="/ressources/images/membres/<%= nomUtilisateur %>" class="<%= rôle %>" alt="Photographie de <%= prénom + " " + nom %>" />
+					<div>
+						<h1 class="title is-2">
+							<%= prénom + " " + nom %>
+						</h1><%
+						if (nomPatronymique) { %>
+							<h2 class="subtitle is-4 is-spaced tab-2">
+								né(e) <%= nomPatronymique %>
+							</h2><%
+						} %>
+						<h2 class="title is-3 is-spaced tab-1">
+							<%= formations[0]["intituléCourt"] %>
+						</h2><%
+						if (poste) { %>
+							<h2 class="subtitle is-3 is-unspaced tab-1">
+								<%= poste %>
+							</h2><%
+						}
+						if (établissement) { %>
+							<h2 class="subtitle is-3 is-unspaced tab-1">
+								<%= établissement %>
+							</h2><%
+						}
+						if (service) { %>
+							<h2 class="subtitle is-5 tab-2">
+								<%= service.nom %>, <%= service.ville %>
+							</h2><%
+						} %>
+					</div>
+				</div><%
+				if (recherche.type_emploi) { %>
+					<div class="recherche">
+						<p class="title is-4 is-unspaced">
+							Intéressé par <%= recherche.type_emploi %> en <%= recherche.domaines.length == 1 ? recherche.domaines[0] : recherche.domaines.slice(0, -1).join(", ") + " ou " + recherche.domaines.slice(-1)[0] %>
+						</p>
+						<p class="subtitle is-5 tab-1">
+							<%= recherche.durée %> · entre le <%= recherche.dateDébut %> et le <%= recherche.dateFin %>
+						</p>
+					</div><%
+				}
+				if (linkedIn || viadeo || sitePersonnel || (false && (adresseMél || numéroTéléphone))) { %>
+					<div class="liens"><%
+						if (linkedIn) { %>
+							<div class="lien">
+								<a href="<%= linkedIn %>" target="blank">
+									<span class="icon is-small">
+										<i class="fab fa-linkedin"></i>
+									</span>
+									<%= linkedIn %>
+								</a>
+							</div><%
+						}
+						if (viadeo) { %>
+							<div class="lien">
+								<a href="<%= viadeo %>" target="blank">
+									<span class="icon is-small">
+										<i class="fab fa-viadeo"></i>
+									</span>
+									<%= viadeo %>
+								</a>
+							</div><%
+						}
+						if (sitePersonnel) { %>
+							<div class="lien">
+								<a href="<%= sitePersonnel %>" target="blank">
+									<span class="icon is-small">
+										<i class="fas fa-globe"></i>
+									</span>
+									<%= sitePersonnel %>
+								</a>
+							</div><%
+						}
+						if (true) {
+							if (adresseMél) { %>
+								<div class="lien">
+									<a href="mailto:<%= adresseMél %>">
+										<span class="icon is-small">
+											<i class="fas fa-envelope"></i>
+										</span>
+										<%= adresseMél %>
+									</a>
+								</div><%
+							}
+							if (numéroTéléphone) { %>
+								<div class="lien">
+									<a href="tel:<%= numéroTéléphone %>">
+										<span class="icon is-small">
+											<i class="fas fa-phone"></i>
+										</span>
+										<%= numéroTéléphone %>
+									</a>
+								</div><%
+							}
+						} %>
+					</div><%
+				} %>
+				<div class="formations">
+					<h1 class="title is-3 is-spaced">
+						Formations
+					</h1><%
+					formations.forEach(function (formation) { %>
+						<div class="formation">
+							<h1 class="subtitle is-4 is-unspaced">
+								<%= formation.intituléComplet %>
+							</h1>
+							<h2 class="subtitle is-5 is-unspaced">
+								<%= formation.établissement %>
+							</h2>
+							<p class="text tab-1">
+								<%= formation.dateDébut %> – <%= formation.dateFin %>
+							</p>
+							<p class="text tab-1">
+								<%= formation.ville %> (<%= formation.codePostal %>), <%= formation.institution %>
+							</p>
+						</div><%
+					}) %>
+				</div>
+			</section>
+		</main>
+<%- include("pied") %>
