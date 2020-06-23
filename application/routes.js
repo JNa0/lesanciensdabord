@@ -36,7 +36,7 @@ module.exports = {
 	},
 	"/accueil": {
 		"get": contrôleurs.accueil.index,
-	}
+	},
 	"/connexion": {
 		"get": contrôleurs.compte.connexion,
 		"post": contrôleurs.compte.validerConnexion,
@@ -65,20 +65,16 @@ module.exports = {
 		"/:id(\\d+)": {
 			"get": contrôleurs.membre.obtenir,
 		},
-		/*
 		"/:id(\\w+)": {
 			"get": contrôleurs.membre.obtenir,
 		},
-		*/
 	},
 	"/organisation": {
 		"/:id(\\d+)": {
 			"get": contrôleurs.organisation.obtenir,
 		},
-		/*
 		"/:id(\\w+)": {
 			"get": contrôleurs.organisation.obtenir,
 		},
-		*/
 	},
 }
