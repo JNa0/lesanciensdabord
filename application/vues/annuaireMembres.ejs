@@ -171,7 +171,9 @@
 						</div>
 						<div class="card-content">
 							<p class="title is-4 is-spaced">
-								<%= membre.prénom %> <%= membre.nom %>
+								<a href="/membre/<%= membre.nomUtilisateur %>">
+									<%= membre.prénom %> <%= membre.nom %>
+								</a>
 							</p>
 							<p class="subtitle is-4 is-unspaced">
 								<%= membre.poste %>
