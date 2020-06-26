@@ -52,6 +52,14 @@ header {
 	z-index: 1;
 }
 
+#icône {
+	width: 2.5rem;
+	height: 2.5rem;
+	max-width: 2.5rem;
+	max-height: 2.5rem;
+	margin: .5rem;
+}
+
 header .icon { font-size: 1.5em }
 
 .navbar-burger span { height: 2px }

@@ -4,10 +4,14 @@
 const chemin = require("path")
 const HTTP = require("http")
 
+const dossierEnvironnement = __dirname
 const dossierApplication = chemin.join(__dirname, "./application")
 
+// Charge le chargeur de modules
+const chargerModules = require(chemin.join(dossierEnvironnement, "chargerModules.js"))
+
 // Charge la configuration de l’application
-const configuration = require(dossierApplication + "/configuration.js")
+const configuration = require(chemin.join(dossierApplication, "configuration.js"))
 
 // Charge Express
 const express = require("./node_modules/express")
@@ -22,7 +26,7 @@ application.set("case sensitive routing", configuration.sensibilitéCasseRoutes 
 application.set("strict routing", configuration.routageStrict || false)
 
 // Définit le dossier où trouver les vues
-application.set("views", chemin.join(dossierApplication, configuration.dossiers.vues))
+application.set("views", configuration.dossiers.vues)
 
 // Définit la fonction de rappel du moteur de rendu (si propre à l’application)
 if (configuration.fonctionRappelMoteurRendu)
@@ -35,7 +39,8 @@ application.set("view engine", configuration.moteurRendu)
 	Définit les chemins statiques
 */
 // Chemin vers les ressources du site
-application.use("/" + configuration.dossiers.ressources, express.static(chemin.join(dossierApplication, configuration.dossiers.ressources)))
+if (configuration.adresseRessources)
+	application.use("/" + configuration.adresseRessources, express.static(configuration.dossiers.ressources))
 
 /*
 	Définit les fonctions intermédiaires
@@ -66,14 +71,16 @@ const créerHôtesVirtuels = require("vhost");
 */
 
 // Charge les fonctions intermédiaires de l’application
-require(chemin.join(dossierApplication, configuration.fichiers.intermédiaires)).forEach(intermédiaire => {
+require(configuration.fichiers.intermédiaires).forEach(intermédiaire => {
 	application.use(intermédiaire)
 })
 
 // Charge les traductions
-require(chemin.join(dossierApplication, configuration.langues)).forEach((adresse, langue) => {
-	application.use(adresse, function () {
-		réponse[langue] = require(chemin.join(dossierApplication, configuration.dossiers.traductions, langue, ".js"))
+const traductions = chargerModules(configuration.dossiers.traductions)
+Object.entries(configuration.langues).forEach(([ langue, adresse ]) => {
+	application.use(adresse, function (requête, réponse, fonctionSuivante) {
+		réponse[langue] = traductions[langue]
+		fonctionSuivante()
 	})
 })
 
@@ -95,7 +102,7 @@ if (configuration.estEnDéveloppement)
 				console.log(`	${clé} -> ${routeParente}`)
 		}
 	}
-})(require(chemin.join(dossierApplication, configuration.fichiers.routes)))
+})(require(configuration.fichiers.routes))
 
 if (configuration.estEnDéveloppement)
 	console.log("\n")

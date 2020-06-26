@@ -17,11 +17,18 @@ module.exports = {
 	"port": 3000,
 
 	/*
+		@type : chaine (undefined)
+		@description : définit le noms du dossier d’accès aux ressources du site
+	*/
+	"adresseRessources": "ressources",
+
+	/*
 		@type : objet (undefined)*
 			@format : nom: cheminSF
 		@description : définit les dossiers utilisés par le noyau
 	*/
 	"dossiers": {
+		"environnement": chemin.join(".", ".."),
 		"application": dossierApplication,
 		"contrôleurs": chemin.join(dossierApplication, "contrôleurs"),
 		"ressources": chemin.join(dossierApplication, "ressources"),
@@ -34,8 +41,8 @@ module.exports = {
 		@description : définit les fichiers utilisés par le noyau
 	*/
 	"fichiers": {
-		"intermédiaires": "intermédiaires.js",
-		"routes": "routes.js",
+		"intermédiaires": chemin.join(dossierApplication, "intermédiaires.js"),
+		"routes": chemin.join(dossierApplication, "routes.js"),
 	},
 
 	/*
@@ -47,7 +54,7 @@ module.exports = {
 	"langues": {
 		// Charge le module “fr”ançais sur tout le site
 		"fr": "/",
-	}
+	},
 
 	/*
 		@type : fonction (null)
