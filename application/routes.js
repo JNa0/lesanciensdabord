@@ -26,9 +26,9 @@
 */
 
 const chemin = require("path")
-const dossierContrôleurs = chemin.join(__dirname, "./contrôleurs")
-const chargerModules = require("./modules/chargerModules")
-const contrôleurs = chargerModules(dossierContrôleurs)
+const configuration = require("./configuration")
+const chargerModules = require(chemin.join(configuration.dossiers.modules, "chargerModules"))
+const contrôleurs = chargerModules(configuration.dossiers.contrôleurs)
 
 module.exports = {
 	"/": {

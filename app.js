@@ -70,6 +70,14 @@ require(chemin.join(dossierApplication, configuration.fichiers.intermédiaires))
 	application.use(intermédiaire)
 })
 
+// Charge les traductions
+require(chemin.join(dossierApplication, configuration.langues)).forEach((adresse, langue) => {
+	application.use(adresse, function () {
+		réponse[langue] = require(chemin.join(dossierApplication, configuration.dossiers.traductions, langue, ".js"))
+	})
+})
+
+
 if (configuration.estEnDéveloppement)
 	console.log("Routes :");
 

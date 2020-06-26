@@ -1,5 +1,6 @@
 
 const chemin = require("path")
+const dossierApplication = __dirname
 
 module.exports = {
 	/*
@@ -16,12 +17,16 @@ module.exports = {
 	"port": 3000,
 
 	/*
-		@type : objet (undefined)
+		@type : objet (undefined)*
+			@format : nom: cheminSF
 		@description : définit les dossiers utilisés par le noyau
 	*/
 	"dossiers": {
-		"vues": "vues",
-		"ressources": "ressources",
+		"application": dossierApplication,
+		"contrôleurs": chemin.join(dossierApplication, "contrôleurs"),
+		"ressources": chemin.join(dossierApplication, "ressources"),
+		"traductions": chemin.join(dossierApplication, "traductions"),
+		"vues": chemin.join(dossierApplication, "vues"),
 	},
 
 	/*
@@ -32,6 +37,17 @@ module.exports = {
 		"intermédiaires": "intermédiaires.js",
 		"routes": "routes.js",
 	},
+
+	/*
+		@type : objet (undefined)
+			@format : nomObjetTraduction: brancheSite
+		@description : permet de définir quels fichiers de langues seront chargés pour quelles adresses (et sous‐adresses)
+		@détails : ce système permet de définir un simple fichier comme un dossier composé de fichiers
+	*/
+	"langues": {
+		// Charge le module “fr”ançais sur tout le site
+		"fr": "/",
+	}
 
 	/*
 		@type : fonction (null)
@@ -68,9 +84,10 @@ module.exports = {
 	"analyserMouchards": true,
 
 	/*
-	@type : chaine (undefined)
-		@valeurs : “ejs”, “nunjucks”, “pug”, “twig”, “jade”, “consolidate”, “hbs”, “hogan”…
-	@description : définit le moteur de rendu qui sera utilisé
+		@type : chaine (undefined)
+			@valeurs : “ejs”, “nunjucks”, “pug”, “twig”, “jade”, “consolidate”, “hbs”, “hogan”…
+		@description : définit le moteur de rendu qui sera utilisé
+		@détails : il faut installer le module NPM associé
 	*/
 	"moteurRendu": "ejs",
 
@@ -97,11 +114,12 @@ module.exports = {
 		@description : crée des hôtes virtuels
 	*/
 	"hôtesVirtuels": null,
+	// Ce paramètre n’est pas pris en compte pour le moment
 
 	/*
 		@type : fonction (undefined)
 		@description : fonction appelée en cas d’erreur en environnement de production
-		@détails : peut être écrasée par des fonctions spécifiques au format “erreur{code}” comme “erreur404”
+		@détails : peut être écrasée par des fonctions spécifiques au format “erreur{code}” comme “erreur404” ou “erreur503”
 	*/
 	// Affiche la page 404 en cas d’erreur (quelconque)
 	"erreur": (erreur, requête, réponse) => {
@@ -110,7 +128,7 @@ module.exports = {
 
 	/*
 		@type : fonction (null)
-		@description : fonction intermédiaire pour répondre à la requête vers l’adresse “/favicon.ico”
+		@description : fonction intermédiaire pour répondre à la requête automatique vers l’adresse “/favicon.ico”
 	*/
 	// Répond que le contenu n’existe pas (code 204)
 	"favicon": (requête, résultat) => {
