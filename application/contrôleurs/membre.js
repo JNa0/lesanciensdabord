@@ -3,6 +3,7 @@ module.exports = {
 	"obtenir": function (requête, réponse) {
 		réponse.render("ficheMembre", {
 			"URL": requête.url,
+			"langue": réponse.fr,
 			"id": 3586,
 			"nomUtilisateur": "florianmonfort",
 			"rôle": "étudiant",

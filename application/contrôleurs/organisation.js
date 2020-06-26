@@ -3,6 +3,7 @@ module.exports = {
 	"obtenir": function (requête, réponse) {
 		réponse.render("ficheOrganisation", {
 			"URL": requête.url,
+			"langue": réponse.fr,
 			"id": 625,
 			"nomOrganisation": "securvie",
 			"rôle": "organisation",

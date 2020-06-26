@@ -92,12 +92,14 @@ module.exports = {
 	"index": function (requête, réponse) {
 		réponse.render("annuaire", {
 			"URL": requête.url,
+			"langue": réponse.fr,
 		})
 	},
 
 	"membres": function (requête, réponse) {
 		réponse.render("annuaireMembres", {
 			"URL": requête.url,
+			"langue": réponse.fr,
 			"membres": [ membre, membre, membre, membre, membre, membre, membre, membre, ]
 		})
 	},
@@ -105,6 +107,7 @@ module.exports = {
 	"organisations": function (requête, réponse) {
 		réponse.render("annuaireOrganisations", {
 			"URL": requête.url,
+			"langue": réponse.fr,
 			"organisations": [ organisation, organisation, organisation, organisation, organisation, organisation, organisation, organisation, ]
 		})
 	},
