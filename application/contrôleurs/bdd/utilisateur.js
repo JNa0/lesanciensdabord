@@ -26,7 +26,7 @@ module.exports = {
 			réponse.write(`${clé} : ${valeur}\n`)
 		})
 
-		réponse.write(requête.body)
+		//réponse.write(requête.body)
 
 		/*
 		membres.insertOne({
