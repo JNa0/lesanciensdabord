@@ -1,38 +1,43 @@
 
-const clientMongo = (function () {
-	let accèsBDD
+/*
 
+	require("mongoose")
+	.connect(ADRESSE_MDB, {
+		"useNewUrlParser": true
+	})
+
+	db.once("open", () => {
+		console.log("Connexion établie : ", ADRESSE_MDB)
+	})
+
+	db.on("error", () => {
+		console.error("Échec de connexion : ", ADRESSE_MDB)
+	})
+
+*/
+
+const ADRESSE_MDB = "mongodb://localhost:27017"
+const NOM_BDD = "lesanciensdabord"
+
+function exécuter (fonction, gérerErreur) {
 	require("mongodb")
 	.MongoClient
-	.connect("mongodb://lesanciensdabord-mdbx.infolannion.com")
-	.then(client => {
-		accèsBDD = client
+	.connect(ADRESSE_MDB, {
+		"useUnifiedTopology": true
 	})
-	.catch(erreur => {
-		accèsBDD = erreur
+	.then(fonction)
+	.catch(gérerErreur || function (erreur) {
+		throw erreur
 	})
-
-	return accèsBDD//.db("lesanciensdabord") || null
-})()
+}
 
 module.exports = {
-	"test": function (requête, réponse) {
-		//const membresBDD = clientMongo.collection("membres")
-		réponse.write("<pre>".+JSON.stringify(accèsBDD)+"</pre>")
-		réponse.send()
-	},
-
 	"creer": function (requête, réponse) {
-		Object.keys(requête.params).forEach(([clé, valeur]) => {
-			réponse.write(`${clé} : ${valeur}\n`)
-		})
-
-		Object.keys(requête.query).forEach(([clé, valeur]) => {
-			réponse.write(`${clé} : ${valeur}\n`)
-		})
-
-		Object.keys(requête.body).forEach(([clé, valeur]) => {
-			réponse.write(`${clé} : ${valeur}\n`)
+		exécuter(client => {
+			client
+			.db(NOM_BDD)
+			.collection("membres")
+			.insertOne({ "nom": "Gaillou", "prénom": "Roger", })
 		})
 
 		/*
@@ -49,14 +54,43 @@ module.exports = {
 		})
 		*/
 
+		Object.keys(requête.params).forEach(([clé, valeur]) => {
+			réponse.write(`${clé} : ${valeur}\n`)
+		})
+
+		Object.keys(requête.query).forEach(([clé, valeur]) => {
+			réponse.write(`${clé} : ${valeur}\n`)
+		})
+
+		Object.keys(requête.body).forEach(([clé, valeur]) => {
+			réponse.write(`${clé} : ${valeur}\n`)
+		})
+
 		réponse.send("\ntout va bien")
 	},
 
-	"modifier": function () {
+	"lister": function (requête, réponse) {
+		exécuter(client => {
+			let membres = client
+				.db(NOM_BDD)
+				.collection("membres")
+				.find({})
+
+			console.log(`${membres.length} membre(s) trouvé(s).`)
+
+			membres.forEach(membre => {
+				réponse.write(JSON.stringify(membre) + "\n")
+			})
+		})
+
+		réponse.send("parfait ?")
+	},
+
+	"modifier": function (requête, réponse) {
 		réponse.send("\ntout va bien")
 	},
 
-	"supprimer": function () {
+	"supprimer": function (requête, réponse) {
 		réponse.send("\ntout va bien")
 	},
 }
