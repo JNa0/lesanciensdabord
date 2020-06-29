@@ -77,4 +77,11 @@ module.exports = {
 			"get": contrôleurs.organisation.obtenir,
 		},
 	},
+	"/bdd": {
+		"/utilisateur": {
+			"/creer": {
+				"get": contrôleurs.bdd.utilisateur.creer,
+			},
+		},
+	},
 }
