@@ -22,7 +22,12 @@ module.exports = {
 			réponse.write(`${clé} : ${valeur}\n`)
 		})
 
-		//requête.write(requête.body)
+		Object.keys(requête.query).forEach(([clé, valeur]) => {
+			réponse.write(`${clé} : ${valeur}\n`)
+		})
+
+		réponse.write(requête.body)
+
 		/*
 		membres.insertOne({
 			"nom": requête.params.nom,
