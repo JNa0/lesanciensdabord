@@ -2,7 +2,7 @@
 const clientMongo = (function () {
 	let accèsBDD
 
-	require("mongodb").MongoClient.connect("https://lesanciensdabord-mdbx.infolannion.com/db/lesanciensdabord/")
+	require("mongodb").MongoClient.connect("mongodb://lesanciensdabord-mdbx.infolannion.com")
 	.then(client => {
 		accèsBDD = client
 	})
@@ -15,9 +15,12 @@ const clientMongo = (function () {
 })
 
 module.exports = {
-	"creer": function (requête, réponse) {
+	"test": function (requête, réponse) {
 		const membresBDD = clientMongo.collection("membres")
+		réponse.send()
+	},
 
+	"creer": function (requête, réponse) {
 		Object.keys(requête.params).forEach(([clé, valeur]) => {
 			réponse.write(`${clé} : ${valeur}\n`)
 		})
