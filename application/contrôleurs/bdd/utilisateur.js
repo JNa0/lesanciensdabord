@@ -16,7 +16,7 @@ const clientMongo = (function () {
 
 module.exports = {
 	"creer": function (requête, réponse) {
-		const membresBDD = clientMongo.collection("membres")
+		//const membresBDD = clientMongo.collection("membres")
 
 		Object.keys(requête.params).forEach(([clé, valeur]) => {
 			réponse.write(`${clé} : ${valeur}\n`)
