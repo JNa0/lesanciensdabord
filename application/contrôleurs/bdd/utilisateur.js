@@ -12,7 +12,7 @@ const clientMongo = (function () {
 	})
 
 	return accèsBDD.db("lesanciensdabord") || null
-})
+})()
 
 module.exports = {
 	"test": function (requête, réponse) {
