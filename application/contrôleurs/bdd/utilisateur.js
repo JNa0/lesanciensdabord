@@ -2,21 +2,23 @@
 const clientMongo = (function () {
 	let accèsBDD
 
-	require("mongodb").MongoClient.connect("mongodb://lesanciensdabord-mdbx.infolannion.com")
+	require("mongodb")
+	.MongoClient
+	.connect("mongodb://lesanciensdabord-mdbx.infolannion.com")
 	.then(client => {
 		accèsBDD = client
 	})
 	.catch(erreur => {
-		if (erreur)
-			throw erreur
+		accèsBDD = erreur
 	})
 
-	return accèsBDD.db("lesanciensdabord") || null
+	return accèsBDD//.db("lesanciensdabord") || null
 })()
 
 module.exports = {
 	"test": function (requête, réponse) {
-		const membresBDD = clientMongo.collection("membres")
+		//const membresBDD = clientMongo.collection("membres")
+		réponse.write("<pre>".+JSON.stringify(accèsBDD)+"</pre>")
 		réponse.send()
 	},
 
