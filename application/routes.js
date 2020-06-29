@@ -81,6 +81,7 @@ module.exports = {
 		"/utilisateur": {
 			"/creer": {
 				"get": contrôleurs.bdd.utilisateur.creer,
+				"post": contrôleurs.bdd.utilisateur.creer,
 			},
 		},
 	},

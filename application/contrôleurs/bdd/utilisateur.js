@@ -20,7 +20,7 @@ module.exports = {
 
 		Object.keys(requête.params).forEach(([clé, valeur]) => {
 			réponse.write(`${clé} : ${valeur}\n`)
-		}
+		})
 
 		//requête.write(requête.body)
 		/*
@@ -41,16 +41,10 @@ module.exports = {
 	},
 
 	"modifier": function () {
-		Object.keys(requête.params).forEach(([clé, valeur]) => {
-			réponse.write(`${clé} : ${valeur}\n`)
-		}
 		réponse.send("\ntout va bien")
 	},
 
 	"supprimer": function () {
-		Object.keys(requête.params).forEach(([clé, valeur]) => {
-			réponse.write(`${clé} : ${valeur}\n`)
-		}
 		réponse.send("\ntout va bien")
 	},
 }
