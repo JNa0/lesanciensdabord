@@ -16,7 +16,8 @@
 
 */
 
-const ADRESSE_MDB = "mongodb://localhost:27017"
+//const ADRESSE_MDB = "mongodb://localhost:27017"
+
 const NOM_BDD = "lesanciensdabord"
 
 function exécuter (fonction, gérerErreur) {
@@ -36,7 +37,7 @@ module.exports = {
 		exécuter(client => {
 			client
 			.db(NOM_BDD)
-			.collection("membres")
+			.collection("membre")
 			.insertOne({ "nom": "Gaillou", "prénom": "Roger", })
 		})
 
@@ -70,20 +71,37 @@ module.exports = {
 	},
 
 	"lister": function (requête, réponse) {
-		exécuter(client => {
-			let membres = client
-				.db(NOM_BDD)
-				.collection("membres")
-				.find({})
+		const mongoose = require("mongoose")
+		const adresse = "mongodb://localhost:27017/lesanciensdabord"
+		const identifiant = "admin"
+		const motdepasse = "exampleteeth.albumin.unbodied.exude"
 
-			console.log(`${membres.length} membre(s) trouvé(s).`)
-
-			membres.forEach(membre => {
-				réponse.write(JSON.stringify(membre) + "\n")
+		const conection = mongoose.connect(adresse, {
+				"useUnifiedTopology": true,
+				"user": identifiant,
+				"pass": motdepasse,
 			})
-		})
+			.then(BDD => {
+				réponse.write("enfin bordel de merde!")
 
-		réponse.send("parfait ?")
+				/*
+				let membre = BDD
+					.collection("membre")
+					.find()
+
+                	        réponse.write(${membres.length} membre(s) trouvé(s).<br/>)
+
+				membres.forEach(membre => {
+					réponse.write(JSON.stringify(membre) + "<br/>")
+				})
+				*/
+			})
+			.catch (erreur => {
+				throw erreur
+				process.exit()
+			})
+
+		réponse.end()
 	},
 
 	"modifier": function (requête, réponse) {
