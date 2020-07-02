@@ -31,6 +31,7 @@ module.exports = {
 		"environnement": chemin.join(".", ".."),
 		"application": dossierApplication,
 		"contrôleurs": chemin.join(dossierApplication, "contrôleurs"),
+		"modèles": chemin.join(dossierApplication, "modèles"),
 		"ressources": chemin.join(dossierApplication, "ressources"),
 		"traductions": chemin.join(dossierApplication, "traductions"),
 		"vues": chemin.join(dossierApplication, "vues"),
@@ -47,13 +48,26 @@ module.exports = {
 
 	/*
 		@type : objet (undefined)
-			@format : nomObjetTraduction: brancheSite
-		@description : permet de définir quels fichiers de langues seront chargés pour quelles adresses (et sous‐adresses)
-		@détails : ce système permet de définir un simple fichier comme un dossier composé de fichiers
+			@format : nomObjetTraduction: branches
+				@format de branche : chaine | [ chaine ]
+		@description : permet de définir quelles traductions seront chargées pour quelles branches du site
+		@détails : ce système permet de définir un simple fichier comme un dossier composé de fichiers comme traduction
 	*/
-	"langues": {
+	"traductions": {
 		// Charge le module “fr”ançais sur tout le site
 		"fr": "/",
+	},
+
+	/*
+		@type : objet (undefined)
+			@format : nomObjetModèle: branches
+				@format de branche : chaine | [ chaine ]
+		@description : permet de définir quels modèles de bases de données seront chargés pour quelles branches du site
+		@détails : ce système permet de définir un simple fichier comme un dossier composé de fichiers comme modèle
+	*/
+	"modèles": {
+		// Charge le modèles “mongodb” sur tout le site
+		"mongodb": "/",
 	},
 
 	/*

@@ -77,13 +77,31 @@ require(configuration.fichiers.intermédiaires).forEach(intermédiaire => {
 
 // Charge les traductions
 const traductions = chargerModules(configuration.dossiers.traductions)
-Object.entries(configuration.langues).forEach(([ langue, adresse ]) => {
-	application.use(adresse, function (requête, réponse, fonctionSuivante) {
-		réponse[langue] = traductions[langue]
-		fonctionSuivante()
+Object.entries(configuration.traductions).forEach(([ langue, adresses ]) => {
+	if (typeof adresses === "string")
+		adresses = [ adresses ]
+
+	adresses.forEach(adresse => {
+		application.use(adresse, function (requête, réponse, fonctionSuivante) {
+			réponse[langue] = traductions[langue]
+			fonctionSuivante()
+		})
 	})
 })
 
+// Charge les modèles
+const modèles = chargerModules(configuration.dossiers.modèles)
+Object.entries(configuration.modèles).forEach(([ modèle, adresses ]) => {
+	if (typeof adresses === "string")
+		adresses = [ adresses ]
+
+	adresses.forEach(adresse => {
+		application.use(adresse, function (requête, réponse, fonctionSuivante) {
+			réponse[modèle] = modèles[modèle]
+			fonctionSuivante()
+		})
+	})
+})
 
 if (configuration.estEnDéveloppement)
 	console.log("Routes :");

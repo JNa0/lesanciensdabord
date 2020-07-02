@@ -1,6 +1,7 @@
 
 module.exports = {
-	/*
+	"créer": function (requête, réponse) {
+		/*
 		.collection("membre")
 		.insertOne({ "nom": "Gaillou", "prénom": "Roger", })
 
@@ -12,6 +13,7 @@ module.exports = {
 		.then(() => {
 			réponse.write("\nSuccès d’insertion\n")
 		})
+		*/
 
 		Object.keys(requête.params).forEach(([clé, valeur]) => {
 			réponse.write(`${clé} : ${valeur}\n`)
@@ -25,24 +27,13 @@ module.exports = {
 			réponse.write(`${clé} : ${valeur}\n`)
 		})
 
-		réponse.send("\ntout va bien")
-	*/
+		réponse.end()
+	},
 
 	"lister": async function (requête, réponse) {
-		const ClientMongo = require("mongodb").MongoClient
-		const adresse = "mongodb://admin:exampleteeth.albumin.unbodied.exude@mongo"
+			const CLIENT_MONGO = mongodb.connecter()
 
-		réponse.write("connection:<br>")
-
-		try {
-			const client = new ClientMongo(adresse, {
-				"useNewUrlParser": true,
-				"useUnifiedTopology": true
-			})
-
-			await client.connect()
-
-			const membres = await client.db("lesanciensdabord").collection("membre").find().sort({ prénom: 1 }).toArray()
+			const membres = await CLIENT_MONGO.db("lesanciensdabord").collection("membre").find().sort({ prénom: 1 }).toArray()
 
 			if (membres.length > 0)
 				membres.forEach(membre => réponse.write(membre.prénom + " " + membre.nom))
@@ -51,18 +42,6 @@ module.exports = {
 				réponse.write("nul membre")
 
 			réponse.end()
-		}
-
-		catch (erreur) {
-			réponse.write(erreur.message)
-			réponse.end()
-			throw erreur
-			process.exit()
-		}
-
-		finally {
-			await client.close()
-		}
 
 		/*
 			let membre = BDD
