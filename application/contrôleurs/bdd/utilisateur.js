@@ -1,47 +1,9 @@
 
-/*
-
-	require("mongoose")
-	.connect(ADRESSE_MDB, {
-		"useNewUrlParser": true
-	})
-
-	db.once("open", () => {
-		console.log("Connexion établie : ", ADRESSE_MDB)
-	})
-
-	db.on("error", () => {
-		console.error("Échec de connexion : ", ADRESSE_MDB)
-	})
-
-*/
-
-//const ADRESSE_MDB = "mongodb://localhost:27017"
-
-const NOM_BDD = "lesanciensdabord"
-
-function exécuter (fonction, gérerErreur) {
-	require("mongodb")
-	.MongoClient
-	.connect(ADRESSE_MDB, {
-		"useUnifiedTopology": true
-	})
-	.then(fonction)
-	.catch(gérerErreur || function (erreur) {
-		throw erreur
-	})
-}
-
 module.exports = {
-	"creer": function (requête, réponse) {
-		exécuter(client => {
-			client
-			.db(NOM_BDD)
-			.collection("membre")
-			.insertOne({ "nom": "Gaillou", "prénom": "Roger", })
-		})
+	/*
+		.collection("membre")
+		.insertOne({ "nom": "Gaillou", "prénom": "Roger", })
 
-		/*
 		membres.insertOne({
 			"nom": requête.params.nom,
 			"prénom": requête.params.prénom,
@@ -50,10 +12,6 @@ module.exports = {
 		.then(() => {
 			réponse.write("\nSuccès d’insertion\n")
 		})
-		.catch(erreur => {
-			throw erreur
-		})
-		*/
 
 		Object.keys(requête.params).forEach(([clé, valeur]) => {
 			réponse.write(`${clé} : ${valeur}\n`)
@@ -68,47 +26,54 @@ module.exports = {
 		})
 
 		réponse.send("\ntout va bien")
-	},
+	*/
 
-	"lister": function (requête, réponse) {
-		const mongoose = require("mongoose")
-		const adresse = "mongodb://localhost:27017/lesanciensdabord"
-		const identifiant = "admin"
-		const motdepasse = "exampleteeth.albumin.unbodied.exude"
+	"lister": async function (requête, réponse) {
+		const ClientMongo = require("mongodb").MongoClient
+		const adresse = "mongodb://admin:exampleteeth.albumin.unbodied.exude@mongo"
 
-		const conection = mongoose.connect(adresse, {
-				"useUnifiedTopology": true,
-				"user": identifiant,
-				"pass": motdepasse,
-			})
-			.then(BDD => {
-				réponse.write("enfin bordel de merde!")
+		réponse.write("connection:<br>")
 
-				/*
-				let membre = BDD
-					.collection("membre")
-					.find()
-
-                	        réponse.write(${membres.length} membre(s) trouvé(s).<br/>)
-
-				membres.forEach(membre => {
-					réponse.write(JSON.stringify(membre) + "<br/>")
-				})
-				*/
-			})
-			.catch (erreur => {
-				throw erreur
-				process.exit()
+		try {
+			const client = new ClientMongo(adresse, {
+				"useNewUrlParser": true,
+				"useUnifiedTopology": true
 			})
 
-		réponse.end()
-	},
+			await client.connect()
 
-	"modifier": function (requête, réponse) {
-		réponse.send("\ntout va bien")
-	},
+			const membres = await client.db("lesanciensdabord").collection("membre").find().sort({ prénom: 1 }).toArray()
 
-	"supprimer": function (requête, réponse) {
-		réponse.send("\ntout va bien")
+			if (membres.length > 0)
+				membres.forEach(membre => réponse.write(membre.prénom + " " + membre.nom))
+
+			else
+				réponse.write("nul membre")
+
+			réponse.end()
+		}
+
+		catch (erreur) {
+			réponse.write(erreur.message)
+			réponse.end()
+			throw erreur
+			process.exit()
+		}
+
+		finally {
+			await client.close()
+		}
+
+		/*
+			let membre = BDD
+				.collection("membre")
+				.find()
+
+				réponse.write(${membres.length} membre(s) trouvé(s).<br/>)
+
+			membres.forEach(membre => {
+				réponse.write(JSON.stringify(membre) + "<br/>")
+			})
+		*/
 	},
 }
