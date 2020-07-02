@@ -16,7 +16,7 @@ module.exports = {
 
 			await client.connect()
 
-			fonction.bind(this, [ client ])
+			return /*await*/ fonction.bind(this, [ client ])
 		}
 
 		catch (erreur) {

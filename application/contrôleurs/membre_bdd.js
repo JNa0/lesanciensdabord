@@ -1,20 +1,6 @@
 
 module.exports = {
 	"créer": function (requête, réponse) {
-		/*
-		.collection("membre")
-		.insertOne({ "nom": "Gaillou", "prénom": "Roger", })
-
-		membres.insertOne({
-			"nom": requête.params.nom,
-			"prénom": requête.params.prénom,
-			"dateNaissance": requête.params.dateNaissance,
-		})
-		.then(() => {
-			réponse.write("\nSuccès d’insertion\n")
-		})
-		*/
-
 		Object.keys(requête.params).forEach(([clé, valeur]) => {
 			réponse.write(`${clé} : ${valeur}\n`)
 		})
@@ -31,16 +17,14 @@ module.exports = {
 	},
 
 	"lister": function (requête, réponse) {
-		réponse.mongodb.exécuter(async function (CLIENT_MONGO) {
-			const membres = await CLIENT_MONGO.db("lesanciensdabord").collection("membre").find().sort({ prénom: 1 }).toArray()
+		const membres = réponse.mongodb.membre.lister()
 
-			if (membres.length > 0)
-				membres.forEach(membre => réponse.write(membre.prénom + " " + membre.nom))
+		if (membres.length > 0)
+			membres.forEach(membre => réponse.write(membre.prénom + " " + membre.nom))
 
-			else
-				réponse.write("nul membre")
+		else
+			réponse.write("nul membre")
 
-			réponse.end()
-		})
+		réponse.end()
 	},
 }
