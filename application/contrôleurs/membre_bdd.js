@@ -30,7 +30,7 @@ module.exports = {
 		réponse.end()
 	},
 
-	"lister": async function (requête, réponse) {
+	"lister": function (requête, réponse) {
 			const CLIENT_MONGO = réponse.mongodb.connecter()
 
 			const membres = await CLIENT_MONGO.db("lesanciensdabord").collection("membre").find().sort({ prénom: 1 }).toArray()
