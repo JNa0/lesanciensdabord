@@ -54,7 +54,7 @@ module.exports = {
 		@détails : ce système permet de définir un simple fichier comme un dossier composé de fichiers comme traduction
 	*/
 	"traductions": {
-		// Charge le module “fr”ançais sur tout le site
+		// Charge la traduction “fr”ançaise sur tout le site
 		"fr": "/",
 	},
 
@@ -66,7 +66,7 @@ module.exports = {
 		@détails : ce système permet de définir un simple fichier comme un dossier composé de fichiers comme modèle
 	*/
 	"modèles": {
-		// Charge le modèles “mongodb” sur tout le site
+		// Charge le modèle “mongodb” sur tout le site
 		"mongodb": "/",
 	},
 

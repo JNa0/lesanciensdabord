@@ -31,17 +31,17 @@ module.exports = {
 	},
 
 	"lister": function (requête, réponse) {
-			const CLIENT_MONGO = réponse.mongodb.connecter()
+			réponse.mongodb.exécuter(function (CLIENT_MONGO) {
+				const membres = await CLIENT_MONGO.db("lesanciensdabord").collection("membre").find().sort({ prénom: 1 }).toArray()
 
-			const membres = await CLIENT_MONGO.db("lesanciensdabord").collection("membre").find().sort({ prénom: 1 }).toArray()
+				if (membres.length > 0)
+					membres.forEach(membre => réponse.write(membre.prénom + " " + membre.nom))
 
-			if (membres.length > 0)
-				membres.forEach(membre => réponse.write(membre.prénom + " " + membre.nom))
+				else
+					réponse.write("nul membre")
 
-			else
-				réponse.write("nul membre")
-
-			réponse.end()
+				réponse.end()
+			})
 
 		/*
 			let membre = BDD

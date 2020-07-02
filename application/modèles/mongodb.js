@@ -7,7 +7,7 @@ const HÔTE = "mongo"
 const ADRESSE = `${PROTOCOLE}://${IDENTIFIANT}:${MOT_DE_PASSE}@${HÔTE}`
 
 module.exports = {
-	connecter: async function () {
+	exécuter: async function (fonction) {
 		try {
 			let client = new ClientMongo(ADRESSE, {
 				"useNewUrlParser": true,
@@ -16,7 +16,7 @@ module.exports = {
 
 			await client.connect()
 
-			return client
+			fonction.bind(this, [ client ])
 		}
 
 		catch (erreur) {
