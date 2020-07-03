@@ -8,16 +8,16 @@ const PORT = "27017"
 const ADRESSE = `${PROTOCOLE}://${IDENTIFIANT}:${MOT_DE_PASSE}@${HÔTE}` //:${PORT}
 
 module.exports = {
-	"exécuter": function (fonction) {
-		const client = new ClientMongo(ADRESSE, {
+	"exécuter": async function (fonction) {
+		let client = new ClientMongo(ADRESSE, {
 			"useNewUrlParser": true,
 			"useUnifiedTopology": true,
 		})
 
 		try {
-			client.connect()
+			await client.connect()
 
-			return fonction.bind(null, [ client ])
+			return await fonction(client)
 		}
 
 		catch (erreur) {
@@ -26,7 +26,7 @@ module.exports = {
 		}
 
 		finally {
-			client.close()
+			await client.close()
 		}
 	},
 }

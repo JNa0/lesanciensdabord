@@ -2,9 +2,9 @@
 const général = require("./général.js")
 
 module.exports = {
-	"lister": function () {
-		return général.exécuter(function (CLIENT_MONGO) {
-			return CLIENT_MONGO
+	"lister": async function () {
+		return await général.exécuter(async function (CLIENT_MONGO) {
+			return await CLIENT_MONGO
 				.db("lesanciensdabord")
 				.collection("membre")
 				.find()

@@ -17,15 +17,14 @@ module.exports = {
 	},
 
 	"lister": function (requête, réponse) {
-		réponse.mongodb.membre.lister()
-		.then(membres => {
-			if (membres.length > 0)
-				membres.forEach(membre => réponse.write(membre.prénom + " " + membre.nom))
+		const membres = réponse.mongodb.membre.lister()
 
-			else
-				réponse.write("nul membre")
+		if (membres.length > 0)
+			membres.forEach(membre => réponse.write(membre.prénom + " " + membre.nom))
 
-			réponse.end()
-		})
+		else
+			réponse.write("nul membre")
+
+		réponse.end()
 	},
 }
