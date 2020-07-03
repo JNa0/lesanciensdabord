@@ -3,7 +3,9 @@ const général = require("./général.js")
 
 module.exports = {
 	"lister": function () {
-		général.exécuter(async function (CLIENT_MONGO) {
+		return []
+		/*
+		return await général.exécuter(async function (CLIENT_MONGO) {
 			return await CLIENT_MONGO
 				.db("lesanciensdabord")
 				.collection("membre")
@@ -11,6 +13,7 @@ module.exports = {
 				.sort({ prénom: 1 })
 				.toArray()
 		})
+		*/
 	},
 	"créer": function () {
 		/*
@@ -29,7 +32,9 @@ module.exports = {
 
 		return
 	},
+	/*
 	"modifier": function () {
 		return
 	},
+	*/
 }

@@ -1,5 +1,5 @@
 
-cosnt général = require("./général.js")
+const général = require("./général.js")
 
 module.exports = {
 	"lister": function () {

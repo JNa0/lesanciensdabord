@@ -4,19 +4,21 @@ const PROTOCOLE = "mongodb"
 const IDENTIFIANT = "admin"
 const MOT_DE_PASSE = "exampleteeth.albumin.unbodied.exude"
 const HÔTE = "mongo"
-const ADRESSE = `${PROTOCOLE}://${IDENTIFIANT}:${MOT_DE_PASSE}@${HÔTE}`
+const PORT = "27017"
+const ADRESSE = `${PROTOCOLE}://${IDENTIFIANT}:${MOT_DE_PASSE}@${HÔTE}` //:${PORT}
 
 module.exports = {
-	exécuter: async function (fonction) {
+	"exécuter": async function (fonction) {
 		try {
 			let client = new ClientMongo(ADRESSE, {
 				"useNewUrlParser": true,
-				"useUnifiedTopology": true
+				"useUnifiedTopology": true,
 			})
 
 			await client.connect()
 
-			return /*await*/ fonction.bind(this, [ client ])
+			return 42
+			//return await fonction.bind(null, [ client ])
 		}
 
 		catch (erreur) {
