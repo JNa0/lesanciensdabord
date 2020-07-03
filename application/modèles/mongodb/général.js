@@ -9,16 +9,15 @@ const ADRESSE = `${PROTOCOLE}://${IDENTIFIANT}:${MOT_DE_PASSE}@${HÔTE}` //:${PO
 
 module.exports = {
 	"exécuter": async function (fonction) {
-		try {
-			let client = new ClientMongo(ADRESSE, {
-				"useNewUrlParser": true,
-				"useUnifiedTopology": true,
-			})
+		let client = new ClientMongo(ADRESSE, {
+			"useNewUrlParser": true,
+			"useUnifiedTopology": true,
+		})
 
+		try {
 			await client.connect()
 
-			return 42
-			//return await fonction.bind(null, [ client ])
+			return await client
 		}
 
 		catch (erreur) {
