@@ -28,13 +28,17 @@ module.exports = {
 
 			const schémas = chargerModules("./schémas")
 
-			CLIENT.once("open", function (CLIENT_MONGO) {
+			const membres = CLIENT.once("open", function (CLIENT_MONGO) {
 				return CLIENT_MONGO
 					.collection("membre")
 					.find()
 					.sort({ prénom: 1 })
 					.toArray()
 			})
+
+			membres.forEach(membre => réponse.write(membre.prénom + " " + membre.nom))
+
+			réponse.end()
 		}
 
 		catch (erreur) {
