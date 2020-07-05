@@ -9,10 +9,11 @@ const BASE_DE_DONNÉES = "lesanciensdabord"
 const ADRESSE = `${PROTOCOLE}://${IDENTIFIANT}:${MOT_DE_PASSE}@${HÔTE}/${BASE_DE_DONNÉES}`
 
 const chargerModules = require("../../../../chargerModules.js")
+const BMongoose = chargerModules("../../modèles/mongoose")
 
 module.exports = {
-	"exécuter": async function (fonction) {
-		await Mongoose.connect(ADRESSE, {
+	"test": function (requête, réponse) {
+		Mongoose.connect(ADRESSE, {
 			"useNewUrlParser": true,
 			"useUnifiedTopology": true,
 		})
@@ -27,9 +28,12 @@ module.exports = {
 
 			const schémas = chargerModules("./schémas")
 
-			return fonction({
-				"client": CLIENT,
-				schémas
+			CLIENT.once("open", function (CLIENT_MONGO) {
+				return CLIENT_MONGO
+					.collection("membre")
+					.find()
+					.sort({ prénom: 1 })
+					.toArray()
 			})
 		}
 
@@ -39,7 +43,7 @@ module.exports = {
 		}
 
 		finally {
-			await CLIENT.close()
+			CLIENT.close()
 		}
 	},
 }
