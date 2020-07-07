@@ -1,9 +1,9 @@
 
 const Mongoose = require("mongoose")
 const Schéma = Mongoose.Schema
-const ObjectId = mongoose.Schema.Types.ObjectId
+const ObjectId = Schéma.Types.ObjectId
 
-module.exports = Mongoose.model("type_emploi", new Schema({
+module.exports = Mongoose.model("type_emploi", new Schéma({
 	"id_type_emploi": ObjectId,
 	"intitulé_type_emploi": String,
-})
+}))

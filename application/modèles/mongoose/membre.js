@@ -1,15 +1,21 @@
 
-const général = require("./général.js")
+const tout = require("./_schémas.js")
+const schémas = tout.schémas
 
 module.exports = {
-	"lister": async function () {
-		return await général.client.once("open", async function (CLIENT_MONGO) {
-			return await CLIENT_MONGO
-				.collection("membre")
-				.find()
-				.sort({ prénom: 1 })
-				.toArray()
-		})
+	"lister": function () {
+		return {
+			"rech": schémas.membre.find({ "nom": "De Rostand" }), //.sort({ "prénom": "asc" })
+			"client": tout.client,
+		}
+/*
+		return {
+			"exec": function (f) {
+				return f(null, [ { "nom": "toast", "prénom": "test", }, { "nom": "michel", "prénom": "éfant", }, ])
+			},
+			"schémas": schémas,
+		}
+*/
 	},
 	"créer": function () {
 		return

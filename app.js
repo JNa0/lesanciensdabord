@@ -137,7 +137,6 @@ application.use((requête, résultat, fonctionSuivante) => {
 application.use((erreur, requête, réponse, fonctionSuivante) => {
 	// en mode développement, charge la page d’erreur informative en cas d’erreur
 	if (configuration.estEnDéveloppement) {
-		// Définit les variables locales, et les erreurs uniquement en mode développement
 		réponse.locals.message = erreur.message
 		réponse.locals.erreur = erreur
 

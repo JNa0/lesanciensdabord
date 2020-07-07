@@ -66,8 +66,12 @@ module.exports = {
 		@détails : ce système permet de définir un simple fichier comme un dossier composé de fichiers comme modèle
 	*/
 	"modèles": {
+		// Charge le modèle “mongoose” (ORM de MongoDB) sur tout le site
+		"mongoose": "/",
+/*
 		// Charge le modèle “mongodb” sur tout le site
 		"mongodb": "/",
+*/
 	},
 
 	/*
@@ -81,7 +85,7 @@ module.exports = {
 	/*
 		@type : objet ({})
 			@champs : @documentation
-		@description : 
+		@description : ?
 		@documentation : expressjs.com/en/4x/api.html#express.urlencoded
 	*/
 	"validationRequête": { "extended": false },

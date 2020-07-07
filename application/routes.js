@@ -86,9 +86,6 @@ module.exports = {
 			"/lister": {
 				"get": contrôleurs.bdd.membre.lister,
 			},
-			"/test": {
-				"get": contrôleurs.bdd.test.test,
-			},
 		},
 	},
 }

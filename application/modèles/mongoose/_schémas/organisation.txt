@@ -1,9 +1,9 @@
 
 const Mongoose = require("mongoose")
 const Schéma = Mongoose.Schema
-const ObjectId = mongoose.Schema.Types.ObjectId
+const ObjectId = Schéma.Types.ObjectId
 
-module.exports = Mongoose.model("organisation", new Schema({
+module.exports = Mongoose.model("organisation", new Schéma({
 	"id_organisation": ObjectId,
 	"nom_organisation": String,
 	"raison_sociale": String,
@@ -14,4 +14,4 @@ module.exports = Mongoose.model("organisation", new Schema({
 	"CP_siège_social": String,
 	"pays_siège_social": String,
 	"lien_site": String,
-})
+}))

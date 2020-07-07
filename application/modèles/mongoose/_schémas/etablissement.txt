@@ -1,13 +1,13 @@
 
 const Mongoose = require("mongoose")
 const Schéma = Mongoose.Schema
-const ObjectId = mongoose.Schema.Types.ObjectId
+const ObjectId = Schéma.Types.ObjectId
 
-module.exports = Mongoose.model("etablissement", new Schema({
+module.exports = Mongoose.model("etablissement", new Schéma({
 	"id_établissement": ObjectId,
 	"nom": String,
 	"ville": String,
 	"CP_établissement": String,
 	"pays": String,
 	"id_institution": ObjectId,
-})
+}))

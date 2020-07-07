@@ -7,14 +7,14 @@ let membre = {
 	"nomPatronymique": "Corouge",
 	"prénom": "Florian",
 	"poste": "Développeur web",
-	"établissement": "Securvie",
+	"organisation": "Securvie",
 	"service": {
 		"nom": "Section réseaux",
 		"ville": "Vannes",
 	},
-	"linkedIn": "linkedin.com/in/florianmonfort1",
+	"linkedIn": "https://linkedin.com/in/florianmonfort1",
 	"viadeo": null,
-	"sitePersonnel": "florianmonfort.info/fr",
+	"sitePersonnel": "https://florianmonfort.info/fr",
 	"numéroTéléphone": "01 23 45 67 89",
 	"adresseMél": "florian.monfort@etudiant.univ-rennes1.fr",
 	"recherche": {

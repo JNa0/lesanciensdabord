@@ -1,10 +1,10 @@
 
 const Mongoose = require("mongoose")
 const Schéma = Mongoose.Schema
-const ObjectId = mongoose.Schema.Types.ObjectId
+const ObjectId = Schéma.Types.ObjectId
 
-module.exports = Mongoose.model("formation", new Schema({
+module.exports = Mongoose.model("formation", new Schéma({
 	"id_formation": ObjectId,
 	"intitulé_court_formation": String,
 	"intitulé_long_formation": String,
-})
+}))

@@ -44,25 +44,8 @@
 				<div class="carte">
 					<div>
 						<img src="/ressources/images/membres/<%= nomUtilisateur %>" class="<%= rôle %>" alt="Photographie de <%= prénom + " " + nom %>" />
-						<p class="text has-text-centered"><%
-							const DUT = formations.find(formation => {
-								return formation.intituléCourt === "DUT Informatique"
-							})
-
-							const DATE = new Date()
-
-							// Si on est en juillet ou après et que l’année est d’un an inférieure à celle de fin
-							// Ou qu’on est en aout ou avant et que l’année est égale à celle de sortie
-							// Alors on est en 2e année (en prenant en compte le cas des alternants)
-							if (
-								(DATE.getMonth() >= 7 && DATE.getFullYear() == (DUT.dateFin - 1)) ||
-								(DATE.getMonth() <= 8 && DATE.getFullYear() == DUT.dateFin)
-							) { %>
-								2<sup>e</sup> année<%
-							}
-							else { %>
-								1<sup>re</sup> année<%
-							} %> · Promotion <%= DUT.dateFin %>
+						<p class="text has-text-centered">
+test
 						</p>
 					</div>
 					<div>
