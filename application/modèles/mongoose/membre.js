@@ -6,7 +6,7 @@ module.exports = {
 	"lister": function () {
 		return {
 			"rech": schémas.membre.find({ "nom": "De Rostand" }), //.sort({ "prénom": "asc" })
-			"client": tout.client,
+			"client": tout.client
 		}
 /*
 		return {

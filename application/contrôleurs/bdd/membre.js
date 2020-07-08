@@ -19,18 +19,16 @@ module.exports = {
 	"lister": function (requête, réponse) {
 		let rs = réponse.mongoose.membre.lister()
 		let mg = require("mongoose")
-		let co = mg.connection
+		let co =  rs.client // mg.connection
 
 		//Object.entries(co.models).forEach(([c,v]) => réponse.write(c + "\n"))
-		réponse.write("etat: " + mg.STATES[co.readyState])
+		réponse.write("_etat_ : " + mg.STATES[co.readyState])
 
-		rs.exec((erreur, membres) => {
-			réponse.write("    ah?\n")
+		rs.rech.exec((erreur, membres) => {
+			réponse.write("    ah!\n")
 
 			if (erreur)
 				throw erreur
-
-			réponse.write("    oh…\n")
 
 			if (membres.length > 0) {
 				réponse.write(membres.length + " membres inscrits !\n")

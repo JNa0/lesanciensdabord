@@ -26,6 +26,10 @@ CLIENT.on("error", erreur => {
 	process.exit()
 })
 
+CLIENT.on("connected", () => {
+	console.log("Connexion établie !")
+})
+
 function déconnecter () {
 	Mongoose.disconnect()
 }
