@@ -78,7 +78,7 @@ module.exports = {
 		},
 	},
 	"/bdd": {
-		"/utilisateur": {
+		"/membre": {
 			"/creer": {
 				"get": contrôleurs.bdd.membre.créer,
 				"post": contrôleurs.bdd.membre.créer,
@@ -87,5 +87,8 @@ module.exports = {
 				"get": contrôleurs.bdd.membre.lister,
 			},
 		},
+		"/test": {
+			"get": contrôleurs.bdd.test.test,
+		}
 	},
 }
