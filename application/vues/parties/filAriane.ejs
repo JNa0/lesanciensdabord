@@ -1,0 +1,13 @@
+
+			<nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
+				<ul><%
+					liens.forEach((lien, i) => {
+						let lienRésolu = langue.filAriane[lien] || lien %>
+						<li<% if (i === (liens.length - 1)) { %> class="is-active"<% } %>>
+							<a<% if (i === (liens.length - 1)) { %> aria-current="page"<% } else {%> href="<%= lienRésolu.adresse %>"<% } %>>
+								<%= lienRésolu.intitulé %>
+							</a>
+						</li><%
+					}) %>
+				</ul>
+			</nav>

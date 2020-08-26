@@ -1,0 +1,91 @@
+<%- include("../modules/objetForEach") %>
+<%- include("../parties/tête", { "titre": offre.intitulé, }) %>
+<%- include("../parties/en‐tête") %>
+		<main><%-
+			include("../parties/filAriane", {
+				"liens": [ "accueil", "offres", { "adresse": "/offre/" + offre._id, "intitulé": offre.intitulé, }, ],
+			}) %>
+
+			<section class="container fiche">
+				<div class="plus"><%
+					if (droitModification) { %>
+						<a class="icon is-medium" href="<%= URL.pathname %>/modifier">
+							<i class="fas fa-user-edit"></i>
+						</a><%
+					} %>
+					<a class="icon is-medium" href="/signalement?page=<%= URL.pathname %>" title="<%= langue.fiche.signalerFiche %>">
+						<i class="fas fa-exclamation-triangle"></i>
+					</a>
+				</div>
+
+				<div class="carte">
+					<figure class="organisation">
+						<img src="<%= offre.service.organisation.logotype.adresse %>" alt="<%= offre.service.organisation.logotype.existe ? (langue.fiche.logotypeDe + " " + offre.service.organisation.raisonSociale) : langue.fiche.sansLogotype %>" />
+					</figure>
+					<div>
+						<h1 class="title is-2">
+							<%= offre.intitulé %>
+						</h1>
+						<p class="subtitle is-3 is-unspaced">
+							<a href="/organisation/<%= offre.service.organisation.nomUtilisateur %>">
+								<%= offre.service.organisation.raisonSociale %>
+							</a>
+						</p>
+						<p class="subtitle is-4 is-spaced tab-1">
+							<a href="/organisation/service/<%= offre.service._id %>">
+								<%= offre.service.nom %>
+							</a>
+						</p>
+						<p class="title is-3">
+							<%= langue.travail.typesEmploi[offre.typeEmploi].intituléCapitalisé %> · <%= offre.service.adresse %>, <%= langue.listes.pays[offre.service.pays].nom %>
+						</p><%
+
+						if (offre.domaines.length > 0) { %>
+							<p class="subtitle is-4">
+								<%= langue.listes.domaines[offre.domaines[0]].intituléCapitalisé %><%=
+
+								offre.domaines.reduce(function (chaineAgrégée, domaine, indice, domaines) {
+									let retour = indice === 0 ? "" : chaineAgrégée + langue.listes.domaines[domaine].intitulé
+
+									// Si c’est le dernier élément
+									if ((indice + 1) === domaines.length)
+										return retour
+
+									// S’il reste un autre élément
+									else if ((indice + 2) === domaines.length)
+										return retour + langue.général.conjonctionFinale
+
+									else
+										return retour + langue.général.conjonction
+								}, "") %>
+							</p><%
+						} %>
+
+						<p class="subtitle is-5">
+							<%= langue.général.validité %> <%= offre.débutValidité.toLocaleDateString() %> <%= langue.général.intervalle %> <%= offre.finValidité.toLocaleDateString() %>
+						</p><%
+
+						if (offre.fichier.existe) { %>
+							<p>
+								<a href="<%= offre.fichier.adresse %>" target="_blank">
+									<span class="icon is-medium">
+										<i class="fas fa-file-alt"></i>
+									</span>
+									<%= langue.fiche.lirePlus %>
+								</a>
+							</p><%
+						} %>
+
+						<p>
+							<a href="/offre/<%= offre._id %>/candidats">
+								<span class="icon is-medium">
+									<i class="fas fa-chevron-right"></i>
+								</span>
+								<%= langue.fiche.voirProfils %>
+							</a>
+						</p>
+					</div>
+				</div>
+			</section>
+		</main>
+<%- include("../parties/pied") %>

@@ -1,0 +1,125 @@
+<%- include("../modules/objetForEach") %>
+<%- include("../parties/tête", { "titre": langue.administration.administration, }) %>
+<%- include("../parties/en‐tête") %>
+		<main><%-
+			include("../parties/filAriane", {
+				"liens": [ "accueil", "administration", ],
+			}) %>
+
+			<nav class="level is-mobile">
+				<div class="level-item has-text-centered">
+					<div>
+						<p class="heading"><%= langue.administration.compteMembres %></p>
+						<p class="title"><%= compteMembres %></p>
+					</div>
+				</div>
+				<div class="level-item has-text-centered">
+					<div>
+						<p class="heading"><%= langue.administration.compteOrganisations %></p>
+						<p class="title"><%= compteOrganisations %></p>
+					</div>
+				</div>
+				<div class="level-item has-text-centered">
+					<div>
+						<p class="heading"><%= langue.administration.compteOffres %></p>
+						<p class="title"><%= compteOffres %></p>
+					</div>
+				</div>
+			</nav>
+
+			<section class="administration content">
+				<div class="tile is-ancestor">
+					<div class="tile is-parent">
+						<article class="tile is-child notification">
+							<p class="title has-text-centered">
+								<%= langue.administration.comptesEnAttente %>
+							</p>
+							<div class="flex-column flex-gap"><%
+								comptesEnAttente.forEach(compte => { %>
+									<div class="card carte">
+										<div class="card-image">
+											<figure class="image">
+												<img src="<%= compte.photographie.adresse %>" alt="<%= langue.fiche.sansPhotographie %>" class="<%= compte.statut %>" />
+											</figure>
+										</div>
+										<div class="card-content">
+											<p class="title is-4 is-spaced">
+												<%= compte.nomComplet %>
+											</p>
+
+											<div class="flex-row flex-gap">
+												<form action="/administration/supprimerMembre" method="POST">
+													<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+													<input type="hidden" name="compte" value="<%= compte.nomUtilisateur %>" />
+
+													<div class="field is-grouped is-grouped-centered">
+														<div class="control">
+															<button class="button is-danger">
+																<%= langue.formulaire.actions.suppression %>
+															</button>
+														</div>
+													</div>
+												</form>
+
+												<form action="/administration/validerMembre" method="POST">
+													<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+													<input type="hidden" name="compte" value="<%= compte.nomUtilisateur %>" />
+
+													<div class="field is-grouped is-grouped-centered">
+														<div class="control">
+															<button class="button is-success">
+																<%= langue.formulaire.actions.validation %>
+															</button>
+														</div>
+													</div>
+												</form>
+											</div>
+										</div>
+									</div><%
+								}) %>
+							</div>
+						</article>
+					</div>
+					<div class="tile is-parent">
+						<article class="tile is-child notification">
+							<p class="title has-text-centered">
+								<%= langue.administration.signalements %>
+							</p>
+							<div class="flex-column flex-gap"><%
+								signalements.forEach(signalement => { %>
+									<div class="card carte">
+										<div class="card-content">
+											<p class="title is-4">
+												<%= signalement.motif %>
+											</p>
+											<p class="subtitle is-4 is-spaced">
+												<a href="<%= signalement.adresse %>">
+													<%= signalement.adresse %>
+												</a>
+											</p>
+											<p class="is-spaced">
+												<%= signalement.description %>
+											</p>
+
+											<form action="/administration/supprimerSignalement" method="POST">
+												<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+												<input type="hidden" name="signalement" value="<%= signalement._id %>" />
+
+												<div class="field is-grouped is-grouped-centered">
+													<div class="control">
+														<button class="button is-danger">
+															<%= langue.formulaire.actions.suppression %>
+														</button>
+													</div>
+												</div>
+											</form>
+										</div>
+									</div><%
+								}) %>
+							</div>
+						</article>
+					</div>
+				</div>
+			</section>
+		</main>
+<%- include("../parties/pied") %>

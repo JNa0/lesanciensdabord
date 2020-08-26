@@ -1,0 +1,28 @@
+<%- include("../modules/objetForEach") %>
+<%- include("../parties/tête", {
+	"titre": langue.annuaire.titreCandidats,
+	"CSS": { "checkradio": true, },
+}) %>
+<%- include("../parties/en‐tête") %>
+		<main><%-
+			include("../parties/filAriane", {
+				"liens": [ "accueil", "offres", { "adresse": "/offre/" + offre._id, "intitulé": offre.intitulé, }, { "adresse": "/offre/" + offre._id + "/candidats", "intitulé": langue.annuaire.titreCandidats, }, ],
+			}) %>
+
+			<section class="fiche container">
+				<h1 class="title is-3 has-text-centered">
+					<%= langue.annuaire.titreCandidats %>
+				</h1>
+				<h2 class="subtitle is-4 has-text-centered">
+					<%= langue.annuaire.titreOffre %> <%= langue.travail.typesEmploi[offre.typeEmploi].préposition %><%= langue.travail.typesEmploi[offre.typeEmploi].intitulé %><%= langue.général.présentatif %> <%= offre.intitulé %>
+				</h2>
+			</section>
+
+			<hr class="hr" /><%-
+
+			include("annuaire", {
+				"objets": candidats,
+				"type": "membre",
+			}) %>
+		</main>
+<%- include("../parties/pied") %>

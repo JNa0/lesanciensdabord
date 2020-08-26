@@ -1,0 +1,226 @@
+<%- include("../../parties/tête", {
+	"titre": langue.formulaire.libellés.enregistrementOffre,
+	"vueJS": {
+		"vueSelect": true,
+		"vueCalendar": true,
+		"script": "vue.inscription.offre",
+	},
+}) %>
+<%- include("../../parties/en‐tête") %>
+		<main><%-
+			include("../../parties/filAriane", {
+				"liens": [ "accueil", "inscription", "inscriptionOffre", ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.enregistrementOffre %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.enregistrementOffre %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<section class="fiche container">
+				<h1 class="title is-3 has-text-centered">
+					<%= langue.formulaire.invitations.enregistrementOffre %>
+				</h1>
+				<form action="/inscription/offre?_csrf=<%= jetonCSRF %>" method="POST" enctype="multipart/form-data" data-organisation="<%= JSON.stringify(session.membre.service.organisation) %>" data-domaines="<%= JSON.stringify(Object.entries(langue.listes.domaines).map(([ clé, domaine, ]) => (function (domaine) { domaine.idDomaine = clé; return domaine })(domaine)).sort((a, b) => a.intitulé <= b.intitulé ? -1 : 1)) %>">
+					<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+					<label class="label">
+						<%= langue.formulaire.libellés.organisation %>
+					</label><%
+
+					if (inscriptionComplète) { %>
+						<div class="field has-addons">
+							<div class="control has-icons-left is-expanded">
+								<v-select label="raisonSociale" :reduce="organisation => organisation.nomUtilisateur" :filterable="false" :options="organisations" @input="définirOrganisation($event)" @search="requesterOrganisations">
+									<template slot="no-options">
+										<%= langue.formulaire.indications.saisieRecherche %>
+									</template>
+
+									<template slot="option" slot-scope="organisation">
+										<div class="d-center">
+											<img :src="organisation.logotype.adresse" /> 
+											{{ organisation.raisonSociale }}
+										</div>
+									</template>
+
+									<template slot="selected-option" slot-scope="organisation">
+										<div class="selected d-center">
+											<img :src="organisation.logotype.adresse" /> 
+											{{ organisation.raisonSociale }}
+										</div>
+									</template>
+								</v-select>
+							</div>
+							<div class="control">
+								<a href="/inscription/organisation" class="button is-info" target="_blank">
+									<%= langue.formulaire.actions.créationOrganisation %>
+								</a>
+							</div>
+
+							<input type="text" name="organisation" id="organisation" required="required" :value="organisation" style="display: none;" />
+						</div><%
+					}
+
+					else { %>
+						<div class="field">
+							<div class="control has-icons-left">
+								<span class="icon is-small is-left">
+									<i class="fas fa-building"></i>
+								</span>
+								<input type="text" class="input" name="organisation" id="organisation" required="required" disabled="disabled" placeholder="<%= langue.formulaire.indications.intituléOrganisation %>" pattern="<%= global.constantes.formatIntituléVue %>" :value="organisation && organisation.raisonSociale" />
+							</div>
+						</div><%
+					} %>
+
+					<template v-if="organisation">
+						<label class="label">
+							<%= langue.formulaire.libellés.service %>
+						</label>
+						<div class="field has-addons">
+							<div class="control is-expanded">
+								<v-select label="nom" :reduce="service => service._id" :filterable="false" :options="services" @input="définirService($event)" @search="requesterServices">
+									<template slot="no-options">
+										<%= langue.formulaire.indications.saisieRecherche %>
+									</template>
+
+									<template slot="option" slot-scope="service">
+										<div class="d-center">
+											{{ service.nom }}
+										</div>
+									</template>
+
+									<template slot="selected-option" slot-scope="service">
+										<div class="selected d-center">
+											{{ service.nom }}
+										</div>
+									</template>
+								</v-select>
+							</div>
+							<div class="control">
+								<a href="/inscription/service" class="button is-info" target="_blank">
+									<%= langue.formulaire.actions.créationService %>
+								</a>
+							</div>
+
+							<input type="text" name="service" id="service" required="required" :value="service" style="display: none;" />
+						</div>
+					</template>
+
+					<div class="field">
+						<label class="label" for="intitulé">
+							<%= langue.formulaire.libellés.intitulé %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-font"></i>
+							</span>
+							<input type="text" class="input"  name="intitulé" id="intitulé"required="required" placeholder="<%= langue.formulaire.indications.intituléOffre %>" pattern="<%= global.constantes.formatIntituléVue %>" />
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="typeEmploi">
+							<%= langue.formulaire.libellés.typeEmploi %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-signature"></i>
+							</span>
+							<div class="select">
+								<select name="typeEmploi" id="typeEmploi" required="required">
+									<option value="" selected="selected">
+										<%= langue.formulaire.indications.typeEmploi %>
+									</option><%
+
+									langue.travail.typesEmploi.forEach((typeEmploi, clé) => { %>
+										<option value="<%= clé %>"><%= typeEmploi.intituléCapitalisé %></option><%
+									}) %>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="domaines">
+							<%= langue.formulaire.libellés.domaines %>
+						</label>
+						<div class="control">
+							<v-select id="sélectionDomaine" label="intituléCapitalisé" v-model="domainesSélectionnés" multiple :options="domainesFiltrés" @search="chercherDomaines" @input="filtrerDomaines">
+								<template slot="no-options">
+									<%= langue.formulaire.indications.saisieRecherche %>
+								</template>
+
+								<template slot="option" slot-scope="domaine">
+									<div class="d-center">
+										{{ domaine.intituléCapitalisé }}
+									</div>
+								</template>
+
+								<template slot="selected-option" slot-scope="domaine">
+									<div class="selected d-center">
+										{{ domaine.intituléCapitalisé }}
+									</div>
+								</template>
+							</v-select>
+
+							<input type="text" name="domaines" id="domaines" ref="domaines" :value="domainesSélectionnés.map(domaine => domaine.idDomaine).join(',')" style="display: none;" />
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="intervalleValidité">
+							<%= langue.formulaire.libellés.intervalleValidité %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-calendar-alt"></i>
+							</span>
+							<v-date-picker mode="range" v-model="intervalleValidité" :min-date="dateMinimaleEmploi" :max-date="dateMaximaleEmploi" :input-props="{}" color="teal" locale="<%= langue.langue.code %>">
+								<input type="text" class="input" name="intervalleValidité" required="required" placeholder="<%= langue.formulaire.indications.périodeValidité %>" pattern="<%= global.constantes.formatPériodeVue %>" slot-scope="{ inputProps, inputEvents, }" v-bind="inputProps" v-on="inputEvents" />
+							</v-date-picker>
+						</div>
+					</div>
+
+					<div class="field">
+						<div class="file is-info is-spaced is-flex-centered">
+							<label class="file-label">
+								<input type="file" class="file-input" name="fichier" accepts="<%= global.constantes.formatsOffre.join(",") %>" />
+								<span class="file-cta">
+									<span class="file-icon">
+										<i class="fas fa-upload"></i>
+									</span>
+									<span class="file-label">
+										<%= langue.formulaire.libellés.choixFichier %>
+									</span>
+								</span>
+							</label>
+						</div>
+					</div>
+
+					<div class="field is-grouped is-grouped-centered">
+						<div class="control">
+							<button class="button is-link">
+								<%= langue.formulaire.actions.validation %>
+							</button>
+						</div>
+					</div>
+				</form>
+			</section>
+		</main>
+<%- include("../../parties/pied") %>

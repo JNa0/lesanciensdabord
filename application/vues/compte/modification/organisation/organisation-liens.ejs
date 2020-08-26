@@ -1,0 +1,89 @@
+<%- include("../../../modules/objetForEach") %>
+<%- include("../../../parties/tête", { "titre": organisation.raisonSociale, }) %>
+<%- include("../../../parties/en‐tête") %>
+		<main><%-
+			include("../../../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireOrganisations", { "adresse": "/organisation/" + organisation.nomUtilisateur, "intitulé": organisation.raisonSociale, }, { "adresse": "/organisation/" + organisation.nomUtilisateur + "/modifier", "intitulé": langue.filAriane.modification, }, ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.modificationOrganisation %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.modificationOrganisation %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<div class="bloc"><%-
+				include("organisation-navigation", { "page": "liens", }) %>
+
+				<section class="fiche container">
+					<form action="<%= URL.pathname %>" method="POST">
+						<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+						<div class="bloc">
+							<h1 class="title title-2">
+								<%= langue.fiche.liens %>
+							</h1>
+							<div class="columns">
+								<div class="column is-mobile is-half-desktop">
+									<label class="label" for="lienSiteProfessionnel">
+										<%= langue.formulaire.libellés.lienSiteProfessionnel %>
+									</label>
+									<div class="control has-icons-left">
+										<span class="icon is-small is-left">
+											<i class="fas fa-globe"></i>
+										</span>
+										<input type="text" class="input" name="lienSiteProfessionnel" id="lienSiteProfessionnel" placeholder="<%= langue.formulaire.indications.lienSiteProfessionnel %>" pattern="<%= global.constantes.formatLienSiteVue %>" spellcheck="false" value="<%= organisation.lienSiteProfessionnel %>" />
+									</div>
+								</div>
+
+								<div class="column is-mobile is-half-desktop">
+									<label class="label" for="lienLinkedIn">
+										<%= langue.formulaire.libellés.lienLinkedIn %>
+									</label>
+									<div class="control has-icons-left">
+										<span class="icon is-small is-left">
+											<i class="fab fa-linkedin"></i>
+										</span>
+										<input type="text" class="input" name="lienLinkedIn" id="lienLinkedIn" placeholder="<%= langue.formulaire.indications.lienLinkedIn %>" pattern="<%= global.constantes.formatLienLinkedInVue %>" spellcheck="false" value="<%= organisation.lienLinkedIn %>" />
+									</div>
+								</div>
+
+								<div class="column is-mobile is-half-desktop">
+									<label class="label" for="lienViadeo">
+										<%= langue.formulaire.libellés.lienViadeo %>
+									</label>
+									<div class="control has-icons-left">
+										<span class="icon is-small is-left">
+											<i class="fab fa-viadeo"></i>
+										</span>
+										<input type="text" class="input" name="lienViadeo" id="lienViadeo" placeholder="<%= langue.formulaire.indications.lienViadeo %>" pattern="<%= global.constantes.formatLienEntrepriseViadeoVue %>" spellcheck="false" value="<%= organisation.lienViadeo %>" />
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="bloc has-text-centered">
+							<button type="submit" class="button is-medium is-success" type="submit">
+								<%= langue.formulaire.actions.validationModification %>
+							</button>
+						</div>
+					</form>
+				</section>
+			</div>
+		</main>
+<%- include("../../../parties/pied") %>

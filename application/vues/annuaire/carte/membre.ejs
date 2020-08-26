@@ -1,0 +1,26 @@
+
+					<div class="card carte">
+						<div class="card-image">
+							<figure class="image">
+								<img src="<%= membre.photographie.adresse %>" alt="<%= membre.photographie.existe ? (langue.fiche.photographieDe + " " + membre.nomComplet) : langue.fiche.sansPhotographie %>" class="<%= membre.statut %>" />
+							</figure>
+						</div>
+						<div class="card-content">
+							<p class="title is-4 is-spaced">
+								<a href="/membre/<%= membre.nomUtilisateur %>">
+									<%= membre.nomComplet %>
+								</a>
+							</p><%
+							if (membre.posteActuel) { %>
+								<p class="subtitle is-4 is-unspaced">
+									<%= membre.posteActuel %>
+								</p><%
+							}
+
+							if (membre.service) { %>
+								<p class="subtitle is-5">
+									<%= membre.service.organisation.raisonSociale %>
+								</p><%
+							} %>
+						</div>
+					</div>

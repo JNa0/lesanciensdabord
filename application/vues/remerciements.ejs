@@ -1,0 +1,27 @@
+<%- include("modules/objetForEach") %>
+<%- include("parties/tête", { "titre": langue.projet.remerciements, }) %>
+<%- include("parties/en‐tête") %>
+		<main><%-
+			include("parties/filAriane", {
+				"liens": [ "accueil", "remerciements", ],
+			}) %>
+
+			<section class="container is-flex-centered">
+				<p class="title is-2 is-spaced has-text-centered">
+					<%= langue.projet.réalisation %> <%= langue.projet.créateur %>
+				</p>
+				<p class="subtitle is-4 has-text-centered">
+					<%= langue.projet.remerciement %>
+				</p>
+				<ul>
+					<%
+						langue.projet.remerciés.forEach(function (remercié) { %>
+							<li class="subtitle is-3 has-text-centered">
+								<%= remercié %>
+							</li><%
+						})
+					%>
+				</ul>
+			</section>
+		</main>
+<%- include("parties/pied") %>

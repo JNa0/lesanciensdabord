@@ -1,0 +1,45 @@
+<%- include("../../../modules/objetForEach") %>
+<%- include("../../../parties/tête", { "titre": offre.intitulé, }) %>
+<%- include("../../../parties/en‐tête") %>
+		<main><%-
+			include("../../../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireOrganisations", { "adresse": "/offre/" + offre._id, "intitulé": offre.intitulé, }, { "adresse": "/offre/" + offre.intitulé + "/modifier", "intitulé": langue.filAriane.modification, }, ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.modificationOffre %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<div class="bloc"><%-
+				include("offre-navigation", { "page": "compte", }) %><%
+
+				if (suppression) { %>
+					<section class="fiche container">
+						<form action="/offre/<%= offre._id %>/supprimer" method="POST">
+							<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+							<div class="is-flex-centered">
+								<button class="button is-danger">
+									<%= langue.formulaire.actions.suppressionPage %>
+								</button>
+							</div>
+						</form>
+					</section><%
+				} %>
+			</div>
+		</main>
+<%- include("../../../parties/pied") %>

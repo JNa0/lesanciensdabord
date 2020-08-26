@@ -1,0 +1,53 @@
+
+				<div class="tabs is-boxed is-centered">
+					<ul>
+						<li<% if (page == "général") { %> class="is-active"<% } %>>
+							<a href="<%= baseURL %>/général">
+								<span class="icon is-small"><i class="fas fa-user" aria-hidden="true"></i></span>
+								<span>
+									<%= langue.fiche.informationsGénérales %>
+								</span>
+							</a>
+						</li>
+						<li<% if (page == "organisation") { %> class="is-active"<% } %>>
+							<a href="<%= baseURL %>/organisation">
+								<span class="icon is-small"><i class="fas fa-building" aria-hidden="true"></i></span>
+								<span>
+									<%= langue.fiche.organisation %>
+								</span>
+							</a>
+						</li>
+						<li<% if (page == "recherche") { %> class="is-active"<% } %>>
+							<a href="<%= baseURL %>/recherche">
+								<span class="icon is-small"><i class="fas fa-search" aria-hidden="true"></i></span>
+								<span>
+									<%= langue.fiche.recherche %>
+								</span>
+							</a>
+						</li>
+						<li<% if (page == "liens") { %> class="is-active"<% } %>>
+							<a href="<%= baseURL %>/liens">
+								<span class="icon is-small"><i class="fas fa-link" aria-hidden="true"></i></span>
+								<span>
+									<%= langue.fiche.liens %>
+								</span>
+							</a>
+						</li>
+						<li<% if (page == "formations") { %> class="is-active"<% } %>>
+							<a href="<%= baseURL %>/formations">
+								<span class="icon is-small"><i class="fas fa-graduation-cap" aria-hidden="true"></i></span>
+								<span>
+									<%= langue.fiche.formations %>
+								</span>
+							</a>
+						</li>
+						<li<% if (page == "compte") { %> class="is-active"<% } %>>
+							<a href="<%= baseURL %>/compte">
+								<span class="icon is-small"><i class="fas fa-user-circle" aria-hidden="true"></i></span>
+								<span>
+									<%= langue.fiche.compte %>
+								</span>
+							</a>
+						</li>
+					</ul>
+				</div>

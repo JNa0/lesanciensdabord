@@ -11,6 +11,11 @@
 	--vert: #48c774;
 	--jaune: #ffdd57;
 	--rouge: #ff3860;
+
+	--tailleImageCarte: 10rem;
+	--tailleFigure: 16rem;
+	--taillePhotographie: calc(var(--tailleFigure) - .4rem);
+	--tailleLogotype: calc(var(--tailleFigure) - .8rem);
 }
 
 * { box-sizing: border-box }
@@ -49,14 +54,14 @@ header {
 	top: 0;
 	left: 0;
 	right: 0;
-	z-index: 5;
+	z-index: 15;
 }
 
-#icône {
-	width: 2.5rem;
-	height: 2.5rem;
-	max-width: 2.5rem;
-	max-height: 2.5rem;
+#logotype {
+	width: 3rem;
+	height: 3rem;
+	max-width: 3rem;
+	max-height: 3rem;
 	margin: 0 1rem 0 .5rem;
 }
 
@@ -67,6 +72,11 @@ header .icon { font-size: 1.5em }
 main {
 	padding: 1rem;
 	margin: 1rem auto;
+}
+
+main > .notification {
+	text-align: justify;
+	text-align-last: center;
 }
 
 .fieldset {
@@ -82,38 +92,56 @@ main {
 	margin-bottom: -.5rem;
 	border: 1px solid var(--gris);
 	border-radius: .25rem;
-	background-color: #fff;
+	background-color: var(--blanc);
 }
 
-.field { padding: .25rem 1rem }
+.field {
+	padding-top: .25rem;
+	padding-bottom: .25rem;
+}
 
 .input,
 .textarea,
-.select > select { border-radius: 0 }
+.select > select,
+form .vc-rounded,
+form .vc-rounded-lg,
+.v-select .vs__dropdown-toggle { border-radius: 0 }
 
 .input:focus,
 .textarea:focus,
-.select select:focus {
+.select select:focus,
+form .vc-rounded:focus,
+.vs__dropdown-toggle:focus {
 	border-color: #66afe9;
-	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),0 0 8px rgba(102, 175, 233, .6);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
 	outline: 0;
 }
 
+.is-error,
 .input:invalid,
 .textarea:invalid,
-.select select:invalid {
-	border-color: #e966af;
-	box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(233,175,102,.6);
+.select select:invalid,
+form .vc-rounded:invalid,
+.vs__dropdown-toggle:invalid {
+	border: 1px solid #e966af !important;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0,.075), 0 0 8px rgba(233,175,102,.6);
 	outline: 0;
+}
+
+/* Copié sur Bulma */
+.v-select .vs__dropdown-toggle {
+	padding-bottom: calc(.4em - 1px);
+	padding-left: calc(.6em - 1px);
+	padding-right: calc(.6em - 1px);
+	padding-top: calc(.4em - 1px);
+	border-color: #dbdbdb;
+	box-shadow: inset 0 .0625em .125em rgba(10,10,10,.05);
 }
 
 .select,
 .select > select { width: 100% }
 
-.fiche {
-	max-width: 756px;
-	position: relative;
-}
+.carte [data-tooltip] { cursor: default !important }
 
 .plus {
 	font-size: 1.5em;
@@ -125,46 +153,39 @@ main {
 .plus a { margin: 1rem }
 
 .annuaire {
+	width: 100%;
 	margin-top: 1rem;
 	display: flex;
 	flex-wrap: wrap;
+	flex-grow: 1;
 }
 
-.annuaire .card {
-	margin: 1rem;
-	width: calc(50% - 2rem);
-	display: flex;
-	flex-direction: row;
-}
+.pagination-list a.is-current { pointer-events: none }
 
-.annuaire .card-image img {
-	width: 250px;
-	height: 250px;
-}
+.fiche { position: relative }
 
 .carte {
 	display: flex;
 	align-items: center;
 }
 
-.annuaire .carte figure { margin-right: .5rem }
+.carte > div:last-child { flex-grow: 1 }
 
-.annuaire .carte img {
-	width: 164px;
-	height: 164px;
-	min-width: 164px;
-	min-height: 164px;
-	margin: 1rem 0;
+.annuaire .carte {
+	margin: 1rem;
+	display: flex;
+	flex-direction: row;
 }
 
-.carte img {
-	margin: 2rem;
-	border: .4rem solid;
+.annuaire .carte figure,
+.administration .carte figure { margin-right: .5rem }
+
+.annuaire .carte img,
+.administration .carte img,
+.fiche .carte figure {
+	border-width: .4rem;
+	border-style: solid;
 	border-radius: 50%;
-	width: 256px;
-	height: 256px;
-	min-width: 256px;
-	min-height: 256px;
 	/*
 		Si la photographie ne se charge pas
 	*/
@@ -174,40 +195,147 @@ main {
 	justify-content: center;
 }
 
+.fiche .carte figure img { border-radius: 50% }
+
+.fiche .carte .organisation img { border-radius: 0 }
+
+.annuaire .carte img,
+.administration .carte img {
+	width: var(--tailleImageCarte);
+	height: var(--tailleImageCarte);
+	min-width: var(--tailleImageCarte);
+	min-height: var(--tailleImageCarte);
+	margin: 1rem 0;
+}
+
+.fiche .carte figure {
+	margin: 2rem;
+	width: var(--tailleFigure);
+	height: var(--tailleFigure);
+	min-width: var(--tailleFigure);
+	min-height: var(--tailleFigure);
+	max-width: var(--tailleFigure);
+	max-height: var(--tailleFigure);
+}
+.fiche .carte .organisation img {
+	width: var(--tailleLogotype);
+	height: var(--tailleLogotype);
+	min-width: var(--tailleLogotype);
+	min-height: var(--tailleLogotype);
+	max-width: var(--tailleLogotype);
+	max-height: var(--tailleLogotype);
+}
+
+.fiche .carte figure img {
+	border: .2rem solid transparent;
+	width: var(--taillePhotographie);
+	height: var(--taillePhotographie);
+	max-width: 100%;
+	max-height: 100%;
+}
+
 .carte .étudiant { border-color: var(--cyan) }
 .carte .ancien { border-color: var(--vert) }
 .carte .enseignant { border-color: var(--rouge) }
-.carte .organisation { border-radius: 0 }
+.carte .administrateur { border-color: rebeccapurple }
 
-.carte div {
+/* Effet d’animation sur la couleur de bordure pour l’administrateur */
+/*
+.carte .administrateur {
+	border: .2rem solid transparent;
+	background-image: linear-gradient(white, white), linear-gradient(45deg, white, blanchedalmond, gold, paleturquoise, palegreen, paleturquoise, gold, blanchedalmond, white);
+	background-origin: border-box;
+	background-clip: content-box, border-box;
+	animation: rotationCouleurs 8s linear infinite; // applique aussi l’effet sur l’image… il faudrait plutôt utiliser backdrop-filter sur un pseudo‐élément mais ils sont déjà réservés par le “tooltip”.
+}
+
+@keyframes rotationCouleurs {
+	from { filter: hue-rotate(0) }
+	to { filter: hue-rotate(360deg) }
+}
+*/
+
+.fiche .carte .organisation img { border-radius: .75rem }
+
+.fiche .carte .organisation,
+.annuaire .carte .organisation img { border-radius: 1rem }
+
+.fiche .carte > div {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 }
 
+.is-flex,
+[class^="flex-"],
+[class^="is-flex-"] { display: flex }
+
+.flex-row,
+.is-flex-row { flex-direction: row !important }
+
+.flex-column,
+.is-flex-column { flex-direction: column !important }
+
+.flex-row .title,
+.is-flex-row .title,
+.flex-row .subtitle,
+.is-flex-row .subtitle { margin-bottom: 0 }
+
+.flex-shrink {
+	flex-shrink: 1;
+	flex-grow: 0;
+}
+
+.flex-grow {
+	flex-grow: 1;
+	flex-shrink: 0;
+}
+
+.flex-centered,
+.is-flex-centered {
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.flex-spaced,
+.is-flex-spaced {
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.flex-end,
+.is-flex-end { justify-content: flex-end }
+
+.flex-row.flex-gap > *:not(:last-child) { margin-right: 1em }
+.flex-column.flex-gap > *:not(:last-child) { margin-bottom: 1em }
+
 .is-unspaced + .subtitle { margin-top: -1.25rem }
 .is-unspaced + .text { margin-top: -.75rem }
+
+.is-spaced.title { margin-bottom: 1.25rem }
+.is-spaced.text,
+.is-spaced.button,
+.is-spaced.file,
+.is-spaced.is-flex { margin-bottom: .75rem }
 
 .title.is-unspacing,
 .subtitle.is-unspacing { margin-bottom: 0 }
 
-.recherche { margin: 2rem 1rem 1rem 1rem }
-
-.liens,
-.villes {
-	display: flex;
-	flex-wrap: wrap;
-	margin: 2rem .5rem 1rem .5rem;
-}
+.columns { flex-wrap: wrap }
 
 .lien,
-.ville {
+.service {
 	padding: .75rem .5rem;
 	word-break: break-word;
 }
 
-.offres,
-.formations { margin: 2rem 1rem 1rem 1rem }
+.bloc { margin: 0 2rem 1rem 2rem }
+.carte + .bloc { margin-top: 2rem }
+.bloc ~ .bloc { margin-top: 2rem }
+.bloc:first-child { margin-top: 0 }
+.bloc:last-child { margin-bottom: 0 }
 
 .offre,
 .formation {
@@ -215,11 +343,35 @@ main {
 	margin: 2rem 1rem;
 }
 
+.v-select .vs__dropdown-toggle { border-radius: 0 }
+
+/* Sous l’en‐tête */
+.v-select .vs__dropdown-menu { z-index: 5 }
+
+.v-select img {
+	min-width: 1rem;
+	min-height: 1rem;
+	max-width: 2rem;
+	max-height: 2rem;
+	margin-right: 1rem;
+}
+
+.v-select .d-center {
+	display: flex;
+	align-items: center;
+	white-space: nowrap;
+}
+
+.v-select .selected img { margin-right: .5rem }
+
 .footer { padding-bottom: 3rem }
 
 .footer { display: flex }
 
 @media only screen and (min-width: 1024px) {
+	.annuaire .carte { width: calc(50% - 2rem) }
+	.administration .carte { width: 100%; }
+
 	/*
 		Pied de page
 	*/
@@ -227,6 +379,9 @@ main {
 }
 
 @media only screen and (max-width: 1023px) {
+	.annuaire .carte,
+	.administration .carte { width: 100% }
+
 	/*
 		Pied de page
 	*/
@@ -244,11 +399,7 @@ main {
 	.tab-3 { margin-left: 4.5rem }
 	.tab-4 { margin-left: 6rem }
 
-	/*
-		Affichage des liens et villes en colonnes
-	*/
-	.lien { width: 50% }
-	.ville { width: 33.333% }
+	.fiche { width: 756px }
 
 	/*
 		La barre gauche des formations et offres n’est que sur ordinateur
@@ -275,7 +426,7 @@ main {
 		position: absolute;
 		border-radius: 50%;
 		background-color: var(--blanc);
-		z-index: 2;
+		z-index: 5;
 	}
 
 	.offre::after,
@@ -291,6 +442,8 @@ main {
 }
 
 @media only screen and (max-width: 768px) {
+	.fiche { width: 100% }
+
 	/*
 		En‐tête de fiche
 	*/
@@ -298,11 +451,13 @@ main {
 
 	.carte div { text-align: center }
 
-	/*
-		Affichage des liens et villes en colonnes
-	*/
-	.lien { width: 100% }
-	.ville { width: 50% }
+	.bloc + .bloc { margin-top: 1rem }
+}
 
-	.liens + .villes { margin-top: 1rem }
+@media only screen and (max-width: 576px) {
+	.annuaire .carte,
+	.administration .carte {
+		display: flex;
+		flex-direction: column;
+	}
 }

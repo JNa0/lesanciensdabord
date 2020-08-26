@@ -1,116 +1,184 @@
 #!/usr/bin/env node
 
-// Charge les dépendances (modules)
+// Charge les dépendances principales
 const chemin = require("path")
-const HTTP = require("http")
+const chargerDossier = require("@iutlannion/charger-dossier")
 
 const dossierEnvironnement = __dirname
 const dossierApplication = chemin.join(__dirname, "./application")
 
-// Charge le chargeur de modules
-const chargerModules = require(chemin.join(dossierEnvironnement, "chargerModules.js"))
-
 // Charge la configuration de l’application
-const configuration = require(chemin.join(dossierApplication, "configuration.js"))
+const configuration = Object.freeze(require(chemin.join(dossierApplication, "configuration.js")))
+global.configuration = configuration
+
+// Charge les constantes de l’application
+global.constantes = Object.freeze(require(configuration.fichiers.constantes))
 
 // Charge Express
-const express = require("./node_modules/express")
-const application = express()
+const Express = require("express")
+const application = Express()
+
+// Définit la durée avant expiration de la requête
+application.use(require("connect-timeout")(configuration.expirationRequête || "30s"))
+// Fonction de rafraichissement pour contrôler que la requête a expiré
+const arrêterSiExpiration = (requête, réponse, fonctionSuivante) => {
+	if (!requête.timedout)
+		fonctionSuivante()
+}
 
 // Définit l’environnement de l’application côté Express
 application.set("env", configuration.estEnDéveloppement ? "development" : "production")
 
 // Définit la sensibilité à la casse dans la définition des routes
 application.set("case sensitive routing", configuration.sensibilitéCasseRoutes || false)
+
 // Définit la sensibilité aux barres obliques finales dans la définition des routes
 application.set("strict routing", configuration.routageStrict || false)
 
 // Définit le dossier où trouver les vues
 application.set("views", configuration.dossiers.vues)
 
-// Définit la fonction de rappel du moteur de rendu (si propre à l’application)
-if (configuration.fonctionRappelMoteurRendu)
-	application.engine(configuration.moteurRendu, configuration.fonctionRappelMoteurRendu)
-
 // Définit le moteur de génération de vues
 application.set("view engine", configuration.moteurRendu)
 
 /*
-	Définit les chemins statiques
-*/
-// Chemin vers les ressources du site
-if (configuration.adresseRessources)
-	application.use("/" + configuration.adresseRessources, express.static(configuration.dossiers.ressources))
-
-/*
 	Définit les fonctions intermédiaires
 */
-// Afficher des messages d’information dans la console en mode développement
+// Affiche dans la console des messages d’information sur les requêtes reçues, en mode développement
 if (configuration.estEnDéveloppement)
-	application.use(require("./node_modules/morgan")("dev"))
+	application.use(require("morgan")("dev"))
 
-// Ajouter les mouchards à la requête
-if (configuration.protection || false)
-	application.use(require("./node_modules/helmet")())
+// Termine si la requête a expiré
+application.use(arrêterSiExpiration)
 
-// Convertir la requête en objet JavaScript
-application.use(express.json())
+// Convertit l’adresse en objet JavaScript
+application.use(Express.json())
 
-// Définir la méthode de vérification des requêtes
-application.use(express.urlencoded(configuration.validationRequête || {}))
+// Définit la méthode de validation des requêtes
+application.use(Express.urlencoded(configuration.validationRequête || {}))
 
-// Ajouter les mouchards à la requête
+// Ajoute les mouchards à la requête
 if (configuration.analyserMouchards || false)
-	application.use(require("./node_modules/cookie-parser")())
+	application.use(require("cookie-parser")())
 
-/*
-const créerHôtesVirtuels = require("vhost");
-(configuration.hôtesVirtuels || []).forEach(hôteVirtuel => {
-	application.use(créerHôtesVirtuels(hôteVirtuel.adresse, hôteVirtuel.intermédiaire))
-})
-*/
+// Indique qu’il faudra compresser les réponses
+if (configuration.compressionRéponse ?? true)
+	application.use(require("compression")())
 
-// Charge les fonctions intermédiaires de l’application
-require(configuration.fichiers.intermédiaires).forEach(intermédiaire => {
-	application.use(intermédiaire)
-})
+application.use(arrêterSiExpiration)
+
+// Charge les droits
+global.droits = require(configuration.fichiers.droits)
+
+// Charge les modules
+global.modules = chargerDossier(configuration.dossiers.modules)
 
 // Charge les traductions
-const traductions = chargerModules(configuration.dossiers.traductions)
+const traductions = chargerDossier(configuration.dossiers.traductions)
+global.langues = {}
+
+// Pour chaque traduction disponible sur le site
 Object.entries(configuration.traductions).forEach(([ langue, adresses ]) => {
 	if (typeof adresses === "string")
 		adresses = [ adresses ]
 
+	// Enregistre la traduction au niveau global
+	global.langues[langue] = traductions[langue]
+
+	// Puis pour chacune des adresses aux quelles elle est associée
 	adresses.forEach(adresse => {
-		application.use(adresse, function (requête, réponse, fonctionSuivante) {
-			réponse[langue] = traductions[langue]
+		// Inscrit cette traduction dans l’objet requête reçu
+		application.use(adresse, (requête, réponse, fonctionSuivante) => {
+			requête["langue"] = global.langues[langue]
 			fonctionSuivante()
 		})
 	})
 })
 
 // Charge les modèles
-const modèles = chargerModules(configuration.dossiers.modèles)
+const modèles = chargerDossier(configuration.dossiers.modèles)
+global.modèles = {}
+
+// Pour chaque modèle disponible sur le site
 Object.entries(configuration.modèles).forEach(([ modèle, adresses ]) => {
 	if (typeof adresses === "string")
 		adresses = [ adresses ]
 
+	// Enregistre le modèle au niveau global
+	global.modèles[modèle] = modèles[modèle]
+
+	// Puis pour chacune des adresses aux quelles il est associé
 	adresses.forEach(adresse => {
-		application.use(adresse, function (requête, réponse, fonctionSuivante) {
-			réponse[modèle] = modèles[modèle]
+		// Inscrit ce modèle dans l’objet requête reçu
+		application.use(adresse, (requête, réponse, fonctionSuivante) => {
+			requête["modèle"] = global.modèles[modèle]
 			fonctionSuivante()
 		})
 	})
 })
 
+// Initialise la session
+const Session = require("express-session")
+const MongoStore = require("connect-mongo")(Session)
+
+// Ajoute un gestionnaire de sessions d’utilisateur
+application.use(Session({
+	"secret": configuration.session.secret,
+	"name": configuration.session.nom || undefined,
+	"store": new MongoStore({ "mongooseConnection": global.modèles.mongoose.connexion, }),
+	"genid": configuration.session.générerIdentifiantSession || undefined,
+	"proxy": configuration.session.proxy || undefined,
+	"resave": configuration.session.sauvegardeContinuelle || false,
+	"rolling": configuration.session.mouchardNécessaire || false,
+	"saveUninitialized": configuration.session.sauvegardeBrouillon || true,
+	"unset": configuration.session.destruction || undefined,
+	"cookie": {
+		"path": configuration.session.chemin || "/",
+		"expireEn": configuration.session.expireEn || undefined,
+		"maxAge": configuration.session.duréeMaximale || undefined,
+		"httpOnly": configuration.session.uniquementHTTP ?? true,
+		"sameSite": configuration.session.sécurisé || "lax",
+	},
+}))
+
+// Ajouter une surcouche de sécurité (après l’initialisation des traductions pour pouvoir s’en servir dans l’affichage des erreurs)
+if (configuration.protection || false) {
+	application.use(require("helmet")())
+
+	application.use(require("csurf")())
+}
+
+// Charge les fonctions intermédiaires de l’application
+require(configuration.fichiers.intermédiaires).forEach(intermédiaire => {
+	application.use(intermédiaire)
+})
+
+// Définit les chemins statiques (nécessitant la mise en place des modèles, de la session et des droits)
+if (configuration.dossiersPublics) {
+	if (! configuration.dossiersPublics instanceof Array)
+		configuration.dossiersPublics = [ configuration.dossiersPublics ]
+
+	configuration.dossiersPublics.forEach(dossierPublic => {
+		if (typeof dossierPublic === "string")
+			application.use("/" + dossierPublic, Express.static(configuration.dossiers[dossierPublic]))
+
+		// Si une fonction condition existe, elle sera appelée, si non, passe à la fonction suivante
+		else if (dossierPublic instanceof Object)
+			application.use("/" + dossierPublic.adresse, dossierPublic.condition || ((requête, réponse, fonctionSuivante) => fonctionSuivante()), Express.static(configuration.dossiers[dossierPublic.dossier]))
+
+		else
+			throw new TypeError()
+	})
+}
+
 if (configuration.estEnDéveloppement)
 	console.log("Routes :");
 
 // Charge les routes de l’application
-(function _ (objet, routeParente = "") {
+(function charger (objet, routeParente = "") {
 	for (let clé in objet) {
 		if (typeof objet[clé] === "object")
-			_(objet[clé], routeParente + clé)
+			charger(objet[clé], routeParente + clé)
 
 		else if (typeof objet[clé] === "function") {
 			application[clé](routeParente, objet[clé])
@@ -125,61 +193,85 @@ if (configuration.estEnDéveloppement)
 if (configuration.estEnDéveloppement)
 	console.log("\n")
 
-// Gére le cas particulier du chargement automatique de l’icône de favori du site
+// Lancem les contrôles unitaires
+if (configuration.estEnDéveloppement)
+	if (configuration.outilContrôle)
+		configuration.contrôler(require(configuration.outilContrôle), configuration.dossiers.contrôles)
+
+if (configuration.estEnDéveloppement)
+	console.log("\n")
+
+// Gère le cas particulier du chargement automatique de l’icône de favori du site
 application.get("/favicon.ico", configuration.favicon || null)
 
-// Capture une erreur 404 et la partage au gestionnaire d’erreurs
+// Si une route arrive jusqu’ici, génère une erreur 404 car elle n’a pas été distribuée ou n’a pas été terminée
 application.use((requête, résultat, fonctionSuivante) => {
-	fonctionSuivante(require("./node_modules/http-errors")(404))
+	fonctionSuivante(require("http-errors")(404))
 })
 
 // Gestionnaire d’erreurs
 application.use((erreur, requête, réponse, fonctionSuivante) => {
-	// en mode développement, charge la page d’erreur informative en cas d’erreur
+	// En mode développement, charge la page d’erreur informative
 	if (configuration.estEnDéveloppement) {
-		réponse.locals.message = erreur.message
-		réponse.locals.erreur = erreur
-
 		// Génère la page d’erreur
 		console.error("\n" + erreur.stack + "\n")
+
 		réponse.status(erreur.status || 500)
-		réponse.render("erreur")
+
+		réponse.render("erreurDéveloppement", {
+			"titre": erreur.status,
+			"message": erreur.message,
+			"erreur": erreur,
+		})
 	}
 
 	// En mode production, appelle la fonction de gestion d’erreur indiquée dans la configuration
 	else
-		// Cherche dans la configuration une fonction correspondant au code d’erreur (format “erreur{code}”) ou prend la fonction “erreur” par défaut
+		// Cherche une fonction associée au code d’erreur (format “erreur{code}”) ou la fonction “erreur” par défaut
 		(configuration["erreur" + erreur.status] || configuration.erreur)(erreur, requête, réponse)
 })
 
 // Définit le port d’écoute du serveur
 application.set("port", configuration.port)
 
-// Créer le serveur HTTP à partir de l’application
-HTTP.createServer(application)
+const HTTP = require("http")
 
-// Écoute sur toutes les interfaces du port demandé
-.listen(configuration.port, configuration.démarrage)
+// Crée le serveur HTTP à partir de l’application
+const serveur = HTTP.createServer(application)
 
-// Écoute les évènements d’erreur du serveur HTTP
-.on("error", erreur => {
-	if (erreur.syscall !== "listen")
-		throw erreur
+	// Écoute sur toutes les interfaces du port demandé
+	.listen(configuration.port, configuration.démarrage)
 
-	const voie = (typeof port === "string" ? "Le canal " : "Le port ") + configuration.port
-
-	switch (erreur.code) {
-		case "EACCES":
-			console.error(voie + " recquiert des privilèges.")
-			process.exit(1)
-		break
-
-		case "EADDRINUSE":
-			console.error(voie + " est déjà en cours d’utilisation.")
-			process.exit(1)
-		break
-
-		default:
+	// Écoute les évènements d’erreur du serveur HTTP
+	.on("error", erreur => {
+		if (erreur.syscall !== "listen")
 			throw erreur
-	}
-})
+
+		const voie = (typeof port === "string" ? "Le canal " : "Le port ") + configuration.port
+
+		switch (erreur.code) {
+			case "EACCES":
+				console.error(voie + " recquiert des privilèges.")
+				process.exit(1)
+			break
+
+			case "EADDRINUSE":
+				console.error(voie + " est déjà en cours d’utilisation.")
+				process.exit(1)
+			break
+
+			default:
+				throw erreur
+		}
+	})
+
+// En cas d’exception du serveur, termine fin proprement à l’application
+const déconnecter = () => {
+	console.log("Signal de terminaison reçu. L’application va s’arrêter.")
+
+	serveur.close(() => console.log("L’application s’est arrêtée."))
+}
+
+process.on("exit", déconnecter)
+process.on("SIGINT", déconnecter)
+process.on("SIGTERM", déconnecter)

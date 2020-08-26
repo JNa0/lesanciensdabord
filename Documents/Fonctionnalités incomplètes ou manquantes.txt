@@ -1,0 +1,44 @@
+
+– Offre : ajouter un champ coordonnées de contact, éventuellement un lien ou une description (en plus du fichier ?)
+
+— Système permettant la création des comptes étudiants “en masse” par promotion, par exemple par simple glisser-déposer d’un fichier (CSV ?) représentant la promotion
+	– Piste pour implanter : Formulaire côté administration et méthode dans le contrôleur membre permettant de gérer la sécurité des champs puis l’envoi à une méthode du modèle qui réalise l’enregistrement des membres
+
+— Forums NodeBB (avec la messagerie privée et le système de notifications) (https://docs.nodebb.org, https://docs.nodebb.org/installing/os/debian)
+
+— Compléter par plus de description de cas le système de contrôles unitaires qui ne contrôle pas tous les cas possibles ; il ne vérifie notamment pas l’enregistrement des fichiers
+
+– Automatisation de tâches avec Cron (https://codesquery.com/node-js-cron-jobs), notamment la suppression des téléchargements non triés par Multer (normalement impossible sauf si interruption) et des offres périmées et le passage de statut d’étudiant à ancien étudiant
+	– Piste pour implanter : installer l'extension et coder les opérations, penser à initier Cron dans le fichier app.js (en ajoutant une mention dans le fichier configuration d’un dossier de tâches automatiques et les lançant toutes)
+
+— Pied de page : lien de contact / coordonnées, politique de confidentialité / mentions légales
+
+— Empêcher les renvois de formulaire
+	– Piste pour implanter : rediriger vers la même page après réception, la difficulté étant à lors d'afficher un message de réponse (information ou confirmation) malgré la redirection
+
+— Restaurer les valeurs dans les champs de recherche sur les annuaires/catalogue ou après un envoi de formulaire erroné (inscription ou modification)
+	– Piste pour implanter : le faire côté serveur en codant les valeurs des champs dans la vue ou côté client en analysant les paramètres GET et en définissant la valeur des champs en conséquence, la partie difficile étant la gestion des champs gérés par Vue.js
+
+— Page d’accueil
+	– Piste pour implanter : créer la vue et la méthode contrôleur associée, qui chargera un membre et une organisation au hasard et affichera les forums principaux et leurs derniers sujets (voir API NodeBB)
+
+— Remplacer mon système de vérification par celui du module express-validator pour gérer les formulaires s’il fonctionne de la même manière (https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/forms)
+
+— Sécuriser d’avantage en interdisant de modifier les infos qui ont déjà été fournies pour les organisations, services et offres ?
+	– Piste pour implanter : bloquer les champs côtés client comme côté serveur s’ils ont une valeur déjà définie, excepté pour un droit de modification complète (administrateur)
+
+— Sécuriser contre le DDoS en interdisant plus de requêtes par IP qu’une limite donnée avec https://github.com/animir/node-rate-limiter-flexible
+
+— Sécuriser avec TLS https://expressjs.com/en/advanced/best-practice-security.html#use-tls
+
+— Modale de confirmation avant suppression, voir les modales Bulma (https://bulma.io/documentation/components/modal) et une ouverture et confirmation avec Vue.js (@click et méthode associée)
+
+— Moins exposer les informations au client sur le système AJAX en filtrant les champs retournés, idem dans certaines vues ou des données sont affichées en clair comme attributs d’éléments HTML pour les rendre accessibles à Vue.js
+
+— Optimiser en utilisant un mécanisme de chargement de page asynchrone côté client vers le serveur avec réponse en JS, permettant des gains de performance et de fluidité en théorie très importants mais difficile à mettre en œuvre de manière sécurisée (avec Socket.io ?)
+
+— Optimiser avec un reverse proxy comme Nginx ou HaProxy
+
+— Optimiser par mise en cache avec Redis et indexation sur MongoDB
+
+– Optimiser au moyen de tâches "esclaves" NodeJS avec https://nodejs.org/api/cluster.html ou pm2 (qui crée autant de tâches que de cœurs CPU) (voir aussi : https://expressjs.com/en/advanced/pm.html)

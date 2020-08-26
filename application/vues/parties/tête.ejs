@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= langue.langue.code %>" lang="<%= langue.langue.code %>">
+	<head>
+		<meta charset="utf-8" /><%
+		if (locals.redirection) { %>
+			<meta http-equiv="refresh" content="1; url=<%= redirection %>" /><%
+		} %>
+		<title>
+			<%= titre %><%= langue.projet.séparateur %><%= langue.projet.nomProjet %>
+		</title>
+		<link rel="icon" type="image/svg+xml" href="/ressources/images/logotype.svg" />
+		<link rel="stylesheet" href="/ressources/styles/bulma.css" /><%
+
+		if (locals.CSS) {
+			if (CSS.tooltip) { %>
+				<link rel="stylesheet" href="/ressources/styles/bulma.tooltip.css" /><%
+			}
+
+			if (CSS.ribbon) { %>
+				<link rel="stylesheet" href="/ressources/styles/bulma.ribbon.css" /><%
+			}
+
+			if (CSS.checkradio) { %>
+				<link rel="stylesheet" href="/ressources/styles/bulma.checkradio.css" /><%
+			}
+		} %>
+		<link rel="stylesheet" href="/ressources/styles/style.css" />
+		<link rel="stylesheet" href="/ressources/fontawesome/css/all.css" />
+		<script src="/ressources/scripts/script.js" defer></script><%
+
+		if (locals.vueJS) { %>
+			<script src="https://fr.vuejs.org/js/vue.min.js" defer></script>
+			<%# <script src="https://fr.vuejs.org/js/vue.js" defer></script> %><%
+
+			if (vueJS.vueSelect) { %>
+				<script src="https://unpkg.com/vue-select@latest" defer></script>
+				<link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css" /><%
+			}
+
+			if (vueJS.vueCalendar) { %>
+				<script src="https://unpkg.com/v-calendar@latest" defer></script><%
+			} %>
+
+			<script src="/ressources/scripts/<%= vueJS.script %>.js" defer></script><%
+		} %>
+	</head>
+	<body<% if (locals.erreur) { %> class="erreur"<% } %>>

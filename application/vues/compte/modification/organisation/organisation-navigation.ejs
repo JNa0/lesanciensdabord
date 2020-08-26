@@ -1,0 +1,32 @@
+
+				<div class="tabs is-boxed is-centered">
+					<ul>
+						<li<% if (page == "général") { %> class="is-active"<% } %>>
+							<a href="<%= baseURL %>/général">
+								<span class="icon is-small"><i class="fas fa-user" aria-hidden="true"></i></span>
+								<span>
+									<%= langue.fiche.informationsGénérales %>
+								</span>
+							</a>
+						</li>
+						<li<% if (page == "liens") { %> class="is-active"<% } %>>
+							<a href="<%= baseURL %>/liens">
+								<span class="icon is-small"><i class="fas fa-link" aria-hidden="true"></i></span>
+								<span>
+									<%= langue.fiche.liens %>
+								</span>
+							</a>
+						</li><%
+
+						if (modificationComplète) { %>
+							<li<% if (page == "compte") { %> class="is-active"<% } %>>
+								<a href="<%= baseURL %>/compte">
+									<span class="icon is-small"><i class="fas fa-user-circle" aria-hidden="true"></i></span>
+									<span>
+										<%= langue.fiche.compte %>
+									</span>
+								</a>
+							</li><%
+						} %>
+					</ul>
+				</div>

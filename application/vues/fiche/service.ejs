@@ -1,0 +1,93 @@
+<%- include("../modules/objetForEach") %>
+<%- include("../parties/tête", { "titre": service.nom, }) %>
+<%- include("../parties/en‐tête") %>
+		<main><%-
+			include("../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireOrganisations", { "adresse": "/organisation/" + service.organisation.nomUtilisateur, "intitulé": service.organisation.raisonSociale, }, { "adresse": "/organisation/service/" + service._id, "intitulé": service.nom, }, ],
+			}) %>
+
+			<section class="container fiche">
+				<div class="plus"><%
+					if (droitModification) { %>
+						<a class="icon is-medium" href="<%= URL.pathname %>/modifier">
+							<i class="fas fa-user-edit"></i>
+						</a><%
+					} %>
+					<a class="icon is-medium" href="/signalement?page=<%= URL.pathname %>" title="<%= langue.fiche.signalerFiche %>">
+						<i class="fas fa-exclamation-triangle"></i>
+					</a>
+				</div>
+
+				<div class="carte">
+					<figure class="organisation">
+						<img src="<%= service.organisation.logotype.adresse %>" alt="<%= service.organisation.logotype.existe ? (langue.fiche.logotypeDe + " " + service.organisation.raisonSociale) : langue.fiche.sansLogotype %>" />
+					</figure>
+					<div>
+						<h1 class="title is-2">
+							<a href="/organisation/<%= service.organisation.nomUtilisateur %>">
+								<%= service.organisation.raisonSociale %>
+							</a>
+						</h1>
+						<h2 class="title is-3 is-spaced">
+							<%= service.nom %>
+						</h2>
+						<h2 class="subtitle is-3">
+							<%= service.adresse %>, <%= langue.listes.pays[service.pays].nom %>
+						</h2>
+					</div>
+				</div>
+
+				<div class="bloc">
+					<h2 class="title title-2">
+						<%= langue.fiche.offres %>
+					</h2><%
+
+					if (service.offres.length > 0) { %>
+						<div><%
+							service.offres.forEach(function (offre) { %>
+								<div class="offre">
+									<h1 class="subtitle is-4 is-unspaced">
+										<a href="/offre/<%= offre._id %>">
+											<%= offre.intitulé %>
+										</a>
+									</h1>
+									<h2 class="subtitle is-5">
+										<%= langue.travail.typesEmploi[offre.typeEmploi].intituléCapitalisé %>
+									</h2><%
+
+									if (offre.fichier.existe) { %>
+										<p>
+											<a href="<%= offre.fichier.adresse %>">
+												<span class="icon is-medium">
+													<i class="fas fa-file-alt"></i>
+												</span>
+												<%= langue.fiche.lirePlus %>
+											</a>
+										</p><%
+									} %>
+
+									<p>
+										<a href="/offre/<%= offre._id %>/candidats">
+											<span class="icon is-medium">
+												<i class="fas fa-chevron-right"></i>
+											</span>
+											<%= langue.fiche.voirProfils %>
+										</a>
+									</p>
+								</div><%
+							}) %>
+						</div><%
+					}
+
+					else { %>
+						<p class="text is-spaced">
+							<%= langue.fiche.nulleOffre %>
+						</p><%
+					} %>
+					<a class="button is-info" href="/inscription/offre">
+						<%= langue.formulaire.actions.créationOffre %>
+					</a>
+				</div>
+			</section>
+		</main>
+<%- include("../parties/pied") %>

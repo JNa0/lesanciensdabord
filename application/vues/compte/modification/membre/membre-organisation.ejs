@@ -1,0 +1,150 @@
+<%- include("../../../modules/objetForEach") %>
+<%- include("../../../parties/tête", {
+	"titre": membre.nomComplet,
+	"vueJS": {
+		"vueSelect": true,
+		"script": "vue.modification.membre.organisation",
+	},
+}) %>
+<%- include("../../../parties/en‐tête") %>
+		<main><%-
+			include("../../../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireMembres", { "adresse": "/membre/" + membre.nomUtilisateur, "intitulé": membre.nomComplet, }, { "adresse": "/membre/" + membre.nomUtilisateur + "/modifier", "intitulé": langue.filAriane.modification, }, ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.modificationMembre %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.modificationMembre %>
+						</p>
+							<p>
+								<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+							</p>
+					</div><%
+				}
+			} %>
+
+			<div class="bloc"><%-
+				include("membre-navigation", { "page": "organisation", }) %>
+
+				<section class="fiche container">
+					<form action="<%= URL.pathname %>" method="POST" data-service="<%= JSON.stringify(membre.service) %>">
+						<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+						<div class="bloc">
+							<h1 class="title tite-2">
+								<%= langue.fiche.organisation %>
+							</h1>
+							<div class="columns">
+								<div class="column is-mobile is-two-thirds-desktop">
+									<label class="label" for="posteActuel">
+										<%= langue.formulaire.libellés.posteActuel %>
+									</label>
+									<div class="control has-icons-left">
+										<span class="icon is-small is-left">
+											<i class="fas fa-briefcase"></i>
+										</span>
+										<input class="input" type="text" spellcheck="false" name="posteActuel" id="posteActuel" placeholder="<%= langue.formulaire.indications.posteActuel %>" value="<%= membre.posteActuel %>" pattern="<%= global.constantes.formatIntituléVue %>" />
+									</div>
+								</div>
+
+								<div class="column is-mobile is-one-third-desktop">
+								</div>
+
+								<div class="column is-mobile is-two-thirds-desktop">
+									<label class="label">
+										<%= langue.formulaire.libellés.votreOrganisation %>
+									</label>
+									<v-select id="sélectionOrganisation" label="raisonSociale" v-model="organisation" :value="organisation" :filterable="false" :options="organisations" @input="définirOrganisation($event)" @search="requesterOrganisations">
+										<template slot="no-options">
+											<%= langue.formulaire.indications.saisieRecherche %>
+										</template>
+
+										<template slot="option" slot-scope="organisation">
+											<div class="d-center">
+												<img :src="organisation.logotype.adresse" /> 
+												{{ organisation.raisonSociale }}
+											</div>
+										</template>
+
+										<template slot="selected-option" slot-scope="organisation">
+											<div class="selected d-center">
+												<img :src="organisation.logotype.adresse" /> 
+												{{ organisation.raisonSociale }}
+											</div>
+										</template>
+									</v-select>
+
+									<input type="text" name="organisation" id="organisation" :value="organisation && organisation.nomUtilisateur" style="display: none;" />
+								</div>
+
+								<div class="column is-mobile is-one-third-desktop has-text-centered">
+									<p class="label">
+										<%= langue.formulaire.libellés.organisationManquante %>
+									</p>
+									<div class="control">
+										<a class="button is-info" href="/inscription/organisation" target="_blank">
+											<%= langue.formulaire.actions.créationMonOrganisation %>
+										</a>
+									</div>
+								</div>
+
+								<div v-if="this.organisation !== null" class="column is-mobile is-two-thrids-desktop">
+									<label class="label">
+										<%= langue.formulaire.libellés.votreService %>
+									</label>
+									<v-select id="sélectionService" label="nom" v-model="service" :value="service" :filterable="false" :options="services" @input="définirService($event)" @search="requesterServices">
+										<template slot="no-options">
+											<%= langue.formulaire.indications.saisieRecherche %>
+										</template>
+
+										<template slot="option" slot-scope="service">
+											<div class="d-center">
+												{{ service.nom }}
+											</div>
+										</template>
+
+										<template slot="selected-option" slot-scope="service">
+											<div class="selected d-center">
+												{{ service.nom }}
+											</div>
+										</template>
+									</v-select>
+
+									<input type="text" name="service" id="service" :value="service && service._id" style="display: none;" />
+								</div>
+
+								<template v-if="this.organisation !== null">
+									<div class="column is-mobile is-one-third-desktop has-text-centered">
+										<p class="label">
+											<%= langue.formulaire.libellés.serviceManquant %>
+										</p>
+										<div class="control">
+											<a class="button is-info" href="/inscription/service" target="_blank">
+												<%= langue.formulaire.actions.créationMonService %>
+											</a>
+										</div>
+									</div>
+								</template>
+							</div>
+						</div>
+
+						<div class="bloc has-text-centered">
+							<button type="submit" class="button is-medium is-success" type="submit">
+								<%= langue.formulaire.actions.validationModification %>
+							</button>
+						</div>
+					</form>
+				</section>
+			</div>
+		</main>
+<%- include("../../../parties/pied") %>

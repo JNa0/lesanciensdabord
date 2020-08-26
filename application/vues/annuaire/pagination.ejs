@@ -1,0 +1,62 @@
+<%
+
+	function rendreLien (i, estCourant) { %>
+		<li>
+			<a class="pagination-link<% if (estCourant) { %> is-current<% } %>" aria-label="<%= langue.annuaire.page %> <%= i %>" <% if (estCourant) { %> aria-current="page"<% } else { %> href="<%= baseURL %>/<%= i %><%= URL.search %>"<% } %>><%= i %></a>
+		</li><%
+	}
+
+%>
+			<section class="container flex-shrink">
+				<nav class="pagination" role="navigation" aria-label="Pagination">
+					<ul class="pagination-list"><%
+						const nombreLiensMarge = 2
+						const nombreLiensDistants = 2
+						const nombreLiensPagesAffichés = nombreLiensDistants * 2 + nombreLiensMarge * 2 + 1
+						const nombrePages = Math.ceil(nombreRésultats / nombreRésultatsParPage)
+
+						if (nombrePages <= nombreLiensPagesAffichés) {
+							for (let i = 1; i <= nombrePages; i++)
+								rendreLien(i, numéroPage === i)
+						}
+
+						else {
+							for (let i = 1; i <= nombreLiensDistants; i++)
+								rendreLien(i, numéroPage === i)
+
+							// Si le lien de page active est “plutôt à gauche”
+							if ((numéroPage + nombreLiensMarge + nombreLiensDistants) <= nombreLiensPagesAffichés) {
+								for (let i = (nombreLiensDistants + 1); i <= (nombreLiensPagesAffichés - nombreLiensDistants); i++)
+									rendreLien(i, numéroPage === i)
+							} %>
+
+							<li>
+								<span class="pagination-ellipsis">…</span>
+							</li><%
+
+							// Si le lien de page active est “plutôt au centre”
+							if (
+								(numéroPage + nombreLiensMarge + nombreLiensDistants) > nombreLiensPagesAffichés
+								&&
+								((nombrePages - numéroPage) + nombreLiensDistants + nombreLiensMarge) >= nombreLiensPagesAffichés
+							) {
+								for (let i = (numéroPage - nombreLiensMarge); i <= (numéroPage + nombreLiensMarge); i++)
+									rendreLien(i, numéroPage === i) %>
+
+								<li>
+									<span class="pagination-ellipsis">…</span>
+								</li><%
+							}
+
+							// Si le lien de page active est “plutôt à droite”
+							if (((nombrePages - numéroPage) + nombreLiensDistants + nombreLiensMarge) < nombreLiensPagesAffichés) {
+								for (let i = (nombrePages - nombreLiensPagesAffichés + nombreLiensDistants + 1); i <= nombrePages - nombreLiensDistants; i++)
+									rendreLien(i, numéroPage === i)
+							}
+
+							for (let i = nombrePages - nombreLiensDistants + 1; i <= nombrePages; i++)
+								rendreLien(i, numéroPage === i)
+						} %>
+					</ul>
+				</nav>
+			</section>

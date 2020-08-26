@@ -1,0 +1,173 @@
+<%- include("../modules/objetForEach") %>
+<%- include("../parties/tête", { "titre": organisation.raisonSociale, }) %>
+<%- include("../parties/en‐tête") %>
+		<main><%-
+			include("../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireOrganisations", { "adresse": "/organisation/" + organisation.raisonSociale, "intitulé": organisation.raisonSociale, }, ],
+			}) %>
+
+			<section class="container fiche">
+				<div class="plus"><%
+					if (droitModification) { %>
+						<a class="icon is-medium" href="<%= URL.pathname %>/modifier" title="<%= langue.fiche.modifierFiche %>">
+							<i class="fas fa-user-edit"></i>
+						</a><%
+					} %>
+					<a class="icon is-medium" href="/signalement?page=<%= URL.pathname %>" title="<%= langue.fiche.signalerFiche %>">
+						<i class="fas fa-exclamation-triangle"></i>
+					</a>
+				</div>
+
+				<div class="carte">
+					<figure class="organisation">
+						<img src="<%= organisation.logotype.adresse %>" alt="<%= organisation.logotype.existe ? (langue.fiche.logotypeDe + " " + organisation.raisonSociale) : langue.fiche.sansLogotype %>" />
+					</figure>
+					<div>
+						<h1 class="title is-2">
+							<%= organisation.raisonSociale %>
+						</h1><%
+						if (organisation.secteurActivité) { %>
+							<h2 class="title is-3 is-spaced">
+								<%= langue.listes.secteursActivité[organisation.secteurActivité] %>
+							</h2><%
+						}
+
+						if (organisation.effectif) { %>
+							<h2 class="subtitle is-3">
+								<%= organisation.effectif %> <%= langue.fiche.salariés %>
+							</h2><%
+						} %>
+						<a href="/annuaire/membres?organisation=<%= organisation.nomUtilisateur %>">
+							<span class="icon is-small">
+								<i class="fas fa-chevron-right"></i>
+							</span>
+							<%= langue.fiche.listeSalariés %>
+						</a>
+					</div>
+				</div><%
+
+				if (organisation.lienLinkedIn || organisation.lienSiteProfessionnel) { %>
+					<div class="bloc columns"><%
+						if (organisation.lienSiteProfessionnel) { %>
+							<div class="lien column is-mobile is-half-desktop">
+								<a href="http://<%= organisation.lienSiteProfessionnel %>" target="_blank">
+									<span class="icon is-small">
+										<i class="fas fa-globe"></i>
+									</span>
+									<%= organisation.lienSiteProfessionnel %>
+								</a>
+							</div><%
+						}
+
+						if (organisation.lienLinkedIn) { %>
+							<div class="lien column is-mobile is-half-desktop">
+								<a href="https://<%= organisation.lienLinkedIn %>" target="_blank">
+									<span class="icon is-small">
+										<i class="fab fa-linkedin"></i>
+									</span>
+									<%= organisation.lienLinkedIn %>
+								</a>
+							</div><%
+						}
+
+						if (organisation.lienViadeo) { %>
+							<div class="lien column is-mobile is-half-desktop">
+								<a href="https://<%= organisation.lienViadeo %>" target="blank">
+									<span class="icon is-small">
+										<i class="fab fa-viadeo"></i>
+									</span>
+									<%= organisation.lienViadeo %>
+								</a>
+							</div><%
+						} %>
+					</div><%
+				} %>
+
+				<div class="bloc">
+					<h2 class="title title-2">
+						<%= langue.fiche.services %>
+					</h2><%
+
+					if (organisation.services.length > 0) { %>
+						<div class="columns"><%
+							organisation.services.forEach(function (service) { %>
+								<div class="service column is-mobile is-half-desktop">
+									<p>
+										<a href="/organisation/service/<%= service._id %>">
+											<span class="icon is-small">
+												<i class="fas fa-map-marker-alt"></i>
+											</span>
+											<%= service.nom %> · <%= service.adresse %>, <%= langue.listes.pays[service.pays].nom %>
+										</a>
+									</p>
+								</div>
+							<% }) %>
+						</div><%
+					}
+
+					else { %>
+						<p class="text is-spaced">
+							<%= langue.fiche.nulService %>
+						</p><%
+					} %>
+					<a class="button is-info" href="/inscription/service">
+						<%= langue.formulaire.actions.créationService %>
+					</a>
+				</div>
+
+				<div class="bloc">
+					<h2 class="title title-2">
+						<%= langue.fiche.offres %>
+					</h2><%
+
+					if (organisation.services.length > 0) { %>
+						<div><%
+							organisation.services.forEach(function (service) {
+								service.offres.forEach(function (offre) { %>
+									<div class="offre">
+										<h1 class="subtitle is-4 is-unspaced">
+											<a href="/offre/<%= offre._id %>">
+												<%= offre.intitulé %>
+											</a>
+										</h1>
+										<h2 class="subtitle is-5">
+											<%= langue.travail.typesEmploi[offre.typeEmploi].intituléCapitalisé %> · <%= service.adresse %>, <%= langue.listes.pays[service.pays].nom %>
+										</h2><%
+
+										if (offre.fichier.existe) { %>
+											<p>
+												<a href="<%= offre.fichier.adresse %>">
+													<span class="icon is-medium">
+														<i class="fas fa-file-alt"></i>
+													</span>
+													<%= langue.fiche.lirePlus %>
+												</a>
+											</p><%
+										} %>
+
+										<p>
+											<a href="/offre/<%= offre._id %>/candidats">
+												<span class="icon is-medium">
+													<i class="fas fa-chevron-right"></i>
+												</span>
+												<%= langue.fiche.voirProfils %>
+											</a>
+										</p>
+									</div><%
+								})
+							}) %>
+						</div><%
+					}
+
+					else { %>
+						<p class="text is-spaced">
+							<%= langue.fiche.nulleOffre %>
+						</p><%
+					} %>
+					<a class="button is-info" href="/inscription/offre">
+						<%= langue.formulaire.actions.créationOffre %>
+					</a>
+				</div>
+			</section>
+		</main>
+<%- include("../parties/pied") %>

@@ -1,0 +1,266 @@
+<%- include("../../../modules/objetForEach") %>
+<%- include("../../../parties/tête", {
+	"titre": offre.intitulé,
+	"vueJS": {
+		"vueSelect": true,
+		"vueCalendar": true,
+		"script": "vue.modification.offre.général",
+	},
+}) %>
+<%- include("../../../parties/en‐tête") %>
+		<main><%-
+			include("../../../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireOrganisations", { "adresse": "/offre/" + offre._id, "intitulé": offre.intitulé, }, { "adresse": "/offre/" + offre._id + "/modifier", "intitulé": langue.filAriane.modification, }, ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.modificationOffre %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.modificationOffre %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<div class="bloc"><%-
+				include("offre-navigation", { "page": "général", }) %>
+
+				<section class="fiche container">
+					<form action="<%= URL.pathname %>?_csrf=<%= jetonCSRF %>" method="POST" enctype="multipart/form-data" data-offre="<%= JSON.stringify(offre) %>" data-domaines="<%= JSON.stringify(Object.entries(langue.listes.domaines).map(([ clé, domaine, ]) => (function (domaine) { domaine.idDomaine = clé; return domaine })(domaine)).sort((a, b) => a.intitulé <= b.intitulé ? -1 : 1)) %>">
+
+						<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+						<div class="bloc">
+							<h1 class="title title-2">
+								<%= langue.fiche.informationsGénérales %>
+							</h1>
+							<div><%
+								if (!modificationComplète) { %>
+									<div class="field">
+										<label class="label" for="organisation">
+											<%= langue.formulaire.libellés.organisation %>
+										</label>
+										<div class="control has-icons-left">
+											<span class="icon is-small is-left">
+												<i class="fas fa-building"></i>
+											</span>
+											<input type="text" class="input" name="organisation" id="organisation" required="required" disabled="disabled" placeholder="<%= langue.formulaire.indications.intitulé %>" spellcheck="false" value="<%= offre.service.organisation.raisonSociale %>" />
+										</div>
+									</div>
+
+									<div class="field">
+										<label class="label" for="service">
+											<%= langue.formulaire.libellés.service %>
+										</label>
+										<div class="control has-icons-left">
+											<span class="icon is-small is-left">
+												<i class="fas fa-map-marker-alt"></i>
+											</span>
+											<input type="text" class="input" name="service" id="service" required="required" disabled="disabled" placeholder="<%= langue.formulaire.indications.intitulé %>" spellcheck="false" value="<%= offre.service.nom %>" />
+										</div>
+									</div><%
+								}
+
+								else { %>
+									<label class="label" for="organisation">
+										<%= langue.formulaire.libellés.organisation %>
+									</label>
+									<div class="field has-addons">
+										<div class="control is-expanded">
+											<v-select id="sélectionOrganisation" label="raisonSociale" v-model="organisation" :value="organisation" :filterable="false" :options="organisations" @input="définirOrganisation($event)" @search="requesterOrganisations">
+												<template slot="no-options">
+													<%= langue.formulaire.indications.saisieRecherche %>
+												</template>
+
+												<template slot="option" slot-scope="organisation">
+													<div class="d-center">
+														<img :src="organisation.logotype.adresse" /> 
+														{{ organisation.raisonSociale }}
+													</div>
+												</template>
+
+												<template slot="selected-option" slot-scope="organisation">
+													<div class="selected d-center">
+														<img :src="organisation.logotype.adresse" /> 
+														{{ organisation.raisonSociale }}
+													</div>
+												</template>
+											</v-select>
+										</div>
+										<div class="control">
+											<a href="/inscription/organisation" class="button is-info" target="_blank">
+												<%= langue.formulaire.actions.créationOrganisation %>
+											</a>
+										</div>
+
+										<input type="text" name="organisation" id="organisation" required="required" :value="organisation && organisation.nomUtilisateur" style="display: none;" />
+									</div>
+
+									<template v-if="organisation">
+										<label class="label">
+											<%= langue.formulaire.libellés.service %>
+										</label>
+										<div class="field has-addons">
+											<div class="control is-expanded">
+												<v-select id="sélectionService" label="nom" v-model="service" :value="service" :filterable="false" :options="services" @input="définirService($event)" @search="requesterServices">
+													<template slot="no-options">
+														<%= langue.formulaire.indications.saisieRecherche %>
+													</template>
+
+													<template slot="option" slot-scope="service">
+														<div class="d-center">
+															{{ service.nom }}
+														</div>
+													</template>
+
+													<template slot="selected-option" slot-scope="service">
+														<div class="selected d-center">
+															{{ service.nom }}
+														</div>
+													</template>
+												</v-select>
+											</div>
+											<div class="control">
+												<a href="/inscription/service" class="button is-info" target="_blank">
+													<%= langue.formulaire.actions.créationService %>
+												</a>
+											</div>
+
+											<input type="text" name="service" id="service" required="required" :value="service && service._id" style="display: none;" />
+										</div>
+									</template><%
+								} %>
+
+								<div class="field">
+									<label class="label" for="intitulé">
+										<%= langue.formulaire.libellés.intitulé %>
+									</label>
+									<div class="control has-icons-left">
+										<span class="icon is-small is-left">
+											<i class="fas fa-font"></i>
+										</span>
+										<input type="text" class="input" name="intitulé" id="intitulé" required="required" placeholder="<%= langue.formulaire.indications.intitulé %>" pattern="<%= global.constantes.formatIntituléVue %>" spellcheck="false" value="<%= offre.intitulé %>" />
+									</div>
+								</div>
+
+								<div class="field">
+									<label class="label" for="typeEmploi">
+										<%= langue.formulaire.libellés.typeEmploi %>
+									</label>
+									<div class="control has-icons-left">
+										<span class="icon is-small is-left">
+											<i class="fas fa-signature"></i>
+										</span>
+										<div class="select">
+											<select name="typeEmploi" id="typeEmploi" required="required">
+												<option value="">
+													<%= langue.formulaire.indications.typeEmploi %>
+												</option><%
+
+												langue.travail.typesEmploi.forEach((typeEmploi, clé) => { %>
+													<option value="<%= clé %>"<% if (offre.typeEmploi === clé) { %> selected="selected"<% } %>><%= typeEmploi.intituléCapitalisé %></option><%
+												}) %>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="field">
+									<label class="label" for="domaines">
+										<%= langue.formulaire.libellés.domaines %>
+									</label>
+									<div class="control">
+										<v-select id="sélectionDomaine" label="intituléCapitalisé" v-model="domainesSélectionnés" multiple :options="domainesFiltrés" @input="filtrerDomaines" @search="chercherDomaines">
+											<template slot="no-options">
+												<%= langue.formulaire.indications.saisieRecherche %>
+											</template>
+
+											<template slot="option" slot-scope="domaine">
+												<div class="d-center">
+													{{ domaine.intituléCapitalisé }}
+												</div>
+											</template>
+
+											<template slot="selected-option" slot-scope="domaine">
+												<div class="selected d-center">
+													{{ domaine.intituléCapitalisé }}
+												</div>
+											</template>
+										</v-select>
+
+										<input type="text" name="domaines" id="domaines" ref="domaines" :value="domainesSélectionnés.map(domaine => domaine.idDomaine).join(',')" style="display: none;" />
+									</div>
+								</div>
+
+								<div class="field">
+									<label class="label" for="intervalleValidité">
+										<%= langue.formulaire.libellés.intervalleValidité %>
+									</label>
+									<div class="control has-icons-left">
+										<span class="icon is-small is-left">
+											<i class="fas fa-calendar-alt"></i>
+										</span>
+										<v-date-picker mode="range" v-model="intervalleValidité" :min-date="dateMinimaleEmploi" :max-date="dateMaximaleEmploi" :input-props="{}" color="teal" locale="<%= langue.langue.code %>">
+											<input type="text" class="input" name="intervalleValidité" required="required" placeholder="<%= langue.formulaire.indications.périodeValidité %>" pattern="<%= global.constantes.formatPériodeVue %>" slot-scope="{ inputProps, inputEvents, }" v-bind="inputProps" v-on="inputEvents" />
+										</v-date-picker>
+									</div>
+								</div>
+
+								<div class="field">
+									<p class="label">
+										<%= langue.formulaire.libellés.fichier %>
+									</p>
+
+									<div class="flex-row flex-gap">
+										<div class="file has-name is-info flex-grow">
+											<label class="file-label">
+												<input type="file" class="file-input" name="fichier" id="fichier" accept="<%= global.constantes.formatsFichierOffre.join(",") %>" @change="définirFichier($event)" />
+												<span class="file-cta">
+													<span class="file-icon">
+														<i class="fas fa-upload"></i>
+													</span>
+													<span class="file-label">
+														<%= langue.formulaire.libellés.choixFichier %>
+													</span>
+												</span>
+												<span class="file-name is-expanded" v-show="!this.suppressionFichier">
+													<%= langue.formulaire.indications.fichierDéposé %>
+												</span>
+												<span class="file-name is-expanded" v-show="this.suppressionFichier">
+													<%= langue.formulaire.indications.fichierManquant %>
+												</span>
+											</label>
+										</div>
+
+										<input type="checkbox" name="suppressionFichier" id="suppressionFichier" ref="suppressionFichier"<% if (!offre.fichier.existe) { %> checked="checked"<% } %> style="display: none;" />
+
+										<button type="button" class="button is-danger" @click="supprimerFichier">
+											<%= langue.formulaire.actions.suppression %>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="bloc has-text-centered">
+							<button type="submit" class="button is-medium is-success" type="submit">
+								<%= langue.formulaire.actions.validationModification %>
+							</button>
+						</div>
+					</form>
+				</section>
+			</div>
+		</main>
+<%- include("../../../parties/pied") %>

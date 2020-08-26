@@ -1,0 +1,58 @@
+<%- include("../../parties/tête", { "titre": langue.formulaire.libellés.inscriptionInstitution, }) %>
+<%- include("../../parties/en‐tête") %>
+		<main><%-
+			include("../../parties/filAriane", {
+				"liens": [ "accueil", "inscription", "inscriptionInstitution", ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.inscriptionInstitution %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.inscriptionInstitution %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<section class="fiche container">
+				<h1 class="title is-3 has-text-centered">
+					<%= langue.formulaire.invitations.inscriptionInstitution %>
+				</h1>
+				<form action="/inscription/institution" method="POST">
+					<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+					<div class="field">
+						<label class="label" for="nom">
+							<%= langue.formulaire.libellés.nom %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-font"></i>
+							</span>
+							<input type="text" class="input" name="nom" id="nom" required="required" placeholder="<%= langue.formulaire.indications.nom %>" pattern="<%= global.constantes.formatIntituléVue %>" spellcheck="false" />
+						</div>
+					</div>
+
+					<div class="field is-grouped is-grouped-centered">
+						<div class="control">
+							<button class="button is-link">
+								<%= langue.formulaire.actions.validation %>
+							</button>
+						</div>
+					</div>
+				</form>
+			</section>
+		</main>
+<%- include("../../parties/pied") %>

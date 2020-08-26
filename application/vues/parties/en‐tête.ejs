@@ -1,0 +1,77 @@
+<%- include("../modules/objetForEach") %>
+		<header>
+			<nav class="navbar bd-navbar has-shadow is-spaced">
+				<div class="navbar-brand">
+					<a class="navbar-item" href="/" title="<%= langue.projet.nomProjet %>">
+						<img src="/ressources/images/logotype.svg" id="logotype" />
+						<%= langue.projet.nomProjet %>
+					</a>
+
+					<a role="button" class="navbar-burger burger" aria-label="<%= langue.entête.libelléMenu %>" aria-expanded="false" data-target="menu">
+						<span aria-hidden="true"></span>
+						<span aria-hidden="true"></span>
+						<span aria-hidden="true"></span>
+					</a>
+				</div>
+
+				<div id="menu" class="navbar-menu">
+					<div class="navbar-start"><%
+						langue.entête.navigation.forEach(lien => {
+							if (lien.sousLiens && (lien.droit ? session.droits[lien.droit] : true)) { %>
+								<div class="navbar-item has-dropdown is-hoverable">
+									<a class="navbar-link" href="<%= lien.adresse %>">
+										<%= lien.libellé %>
+									</a>
+
+									<div class="navbar-dropdown"><%
+										lien.sousLiens.forEach(sousLien => { %>
+											<a class="navbar-item" href="<%= sousLien.adresse %>">
+												<%= sousLien.libellé %>
+											</a><%
+										}) %>
+									</div>
+								</div><%
+							}
+
+							else if (lien.droit ? session.droits[lien.droit] : true) { %>
+								<a class="navbar-item" href="<%= lien.adresse %>">
+									<%= lien.libellé %>
+								</a><%
+							}
+						}) %>
+					</div>
+
+					<div class="navbar-end"><%
+						if (session.estConnecté) { %>
+							<div class="navbar-item">
+								<div class="buttons">
+									<a class="icon is-large">
+										<i class="fas fa-bell"></i>
+									</a>
+									<a class="icon is-large" href="/membre/<%= session.membre.nomUtilisateur %>">
+										<i class="fas fa-user"></i>
+									</a>
+									<a class="icon is-large" href="/déconnexion">
+										<i class="fas fa-power-off"></i>
+									</a>
+								</div>
+							</div><%
+						}
+						else { %>
+							<div class="navbar-item">
+								<div class="buttons">
+									<a class="button is-primary" href="/inscription/membre">
+										<strong>
+											<%= langue.formulaire.actions.inscription %>
+										</strong>
+									</a>
+									<a class="button is-light" href="/connexion">
+										<%= langue.formulaire.actions.connexion %>
+									</a>
+								</div>
+							</div><%
+						} %>
+					</div>
+				</div>
+			</nav>
+		</header>

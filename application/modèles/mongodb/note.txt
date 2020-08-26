@@ -1,4 +1,0 @@
-
-MongoDB propose une interface utilisant les promesses et le développement asynchrone pour consulter et modifier les données.
-Celà m’oblige donc à utiliser un grand de fonctions “async” et d’appels “await” et à faire un .then à chaque consultation des données, dans les contrôleurs.
-C’est désagréable mais c’est la seule solution viable que j’ai trouvé (sic).

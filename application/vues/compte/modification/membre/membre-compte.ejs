@@ -1,0 +1,171 @@
+<%- include("../../../modules/objetForEach") %>
+<%- include("../../../parties/tête", {
+	"titre": membre.nomComplet,
+	"CSS": { "checkradio": true, },
+}) %>
+<%- include("../../../parties/en‐tête") %>
+		<main><%-
+			include("../../../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireMembres", { "adresse": "/membre/" + membre.nomUtilisateur, "intitulé": membre.nomComplet, }, { "adresse": "/membre/" + membre.nomUtilisateur + "/modifier", "intitulé": langue.filAriane.modification, }, ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.modificationMembre %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.modificationMembre %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<div class="bloc"><%-
+				include("membre-navigation", { "page": "compte", }) %>
+
+				<section class="fiche container">
+					<form action="<%= URL.pathname %>" method="POST">
+						<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+						<div class="bloc">
+							<h1 class="title tite-2">
+								<%= langue.fiche.compte %>
+							</h1>
+
+							<div class="field">
+								<label class="label" for="nomUtilisateur">
+									<%= langue.formulaire.libellés.nomUtilisateur %>
+								</label>
+								<div class="control has-icons-left">
+									<span class="icon is-small is-left">
+										<i class="fas fa-user"></i>
+									</span>
+									<input type="text" class="input" name="nomUtilisateur" id="nomUtilisateur" required="required"<% if (!modificationComplète) { %> disabled="disabled"<% } %> placeholder="<%= langue.formulaire.indications.nomUtilisateur %>" pattern="<%= global.constantes.formatNomUtilisateurVue %>" spellcheck="false" value="<%= membre.nomUtilisateur %>" />
+								</div>
+							</div>
+
+							<div class="field">
+								<label class="label" for="statut">
+									<%= langue.formulaire.libellés.statut %>
+								</label><%
+
+								if (!modificationComplète) { %>
+									<div class="control has-icons-left">
+										<span class="icon is-small is-left">
+											<i class="fas fa-user-tag"></i>
+										</span>
+										<input type="text" class="input" name="statut" id="statut" required="required" disabled="disabled" placeholder="<%= langue.formulaire.indications.statut %>" spellcheck="false" value="<%= langue.fiche.intitulésStatuts[membre.civilité ? 1 : 0][membre.statut] %>" />
+									</div><%
+								}
+
+								else { %>
+									<div class="control has-icons-left">
+										<span class="icon is-small is-left">
+											<i class="fas fa-user-tag"></i>
+										</span>
+										<div class="select">
+											<select name="statut" id="statut" required="required"><%
+												langue.formulaire.champsRecherche.statuts.forEach((intituléStatut, idStatut) => { %>
+													<option value="<%= idStatut %>"<% if (idStatut === membre.statut) { %> selected="selected"<% } %>>
+														<%= intituléStatut %>
+													</option><%
+												}) %>
+											</select>
+										</div>
+									</div><%
+								} %>
+							</div>
+
+							<div class="field">
+								<label class="label" for="prénom">
+									<%= langue.formulaire.libellés.changementMotDePasse %>
+								</label>
+								<div class="control has-icons-left">
+									<span class="icon is-small is-left">
+										<i class="fas fa-lock"></i>
+									</span>
+									<input type="password" class="input" name="motDePasse" id="motDePasse" placeholder="<%= langue.formulaire.indications.changementMotDePasse %>" value="" />
+								</div>
+							</div>
+
+							<div class="field">
+								<label class="label" for="prénom">
+									<%= langue.formulaire.libellés.confirmationMotDePasse %>
+								</label>
+								<div class="control has-icons-left">
+									<span class="icon is-small is-left">
+										<i class="fas fa-lock"></i>
+									</span>
+									<input type="password" class="input" name="confirmationMotDePasse" id="confirmationMotDePasse" placeholder="<%= langue.formulaire.indications.confirmationMotDePasse %>" value="" />
+								</div>
+							</div>
+
+							<div class="field">
+								<div class="control">
+									<input type="checkbox" class="is-checkradio" disabled="disabled" checked="<%= membre.traitementDonnéesProfessionnelles ? "true" : "false" %>">
+									<label class="checkbox">
+										<%= langue.formulaire.libellés.autorisationTraitementDonnéesPersonnelles %>
+									</label>
+								</div>
+							</div>
+
+							<div class="field">
+								<div class="control">
+									<input type="checkbox" class="is-checkradio" disabled="disabled" checked="<%= membre.traitementDonnéesProfessionnelles ? "true" : "false" %>">
+									<label class="checkbox">
+										<%= langue.formulaire.libellés.autorisationTraitementDonnéesProfessionnelles %>
+									</label>
+								</div>
+							</div>
+
+							<div class="has-text-centered">
+								<p class="text">
+									<%= langue.fiche.inscritDepuis %> <%= membre.dateInscription.toLocaleDateString() %>.
+								</p><%
+								if (membre.dateDernièreConnexion) { %>
+									<p class="text">
+										<%= langue.fiche.dernièreConnexion %> <%= membre.dateDernièreConnexion.toLocaleDateString() %>.
+									</p><%
+								}
+								else { %>
+									<p>
+										<%= langue.fiche.jamaisConnecté %>.
+									</p><%
+								} %>
+							</div>
+						</div>
+
+						<div class="bloc has-text-centered">
+							<button type="submit" class="button is-medium is-success" type="submit">
+								<%= langue.formulaire.actions.validationModification %>
+							</button>
+						</div>
+					</form><%
+
+					if (suppression) { %>
+						<hr class="hr" />
+
+						<form action="/membre/<%= membre.nomUtilisateur %>/supprimer" method="POST">
+							<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+							<div class="is-flex-centered">
+								<button class="button is-danger">
+									<%= modificationComplète ? langue.formulaire.actions.suppressionCompte : langue.formulaire.actions.suppressionMonCompte %>
+								</button>
+							</div>
+						</form><%
+					} %>
+				</section>
+			</div>
+		</main>
+<%- include("../../../parties/pied") %>

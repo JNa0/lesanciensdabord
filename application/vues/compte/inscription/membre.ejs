@@ -1,0 +1,186 @@
+<%- include("../../parties/tête", {
+	"titre": langue.formulaire.libellés.inscription,
+	"CSS": { "checkradio": true, },
+	"vueJS": {
+		"vueCalendar": true,
+		"script": "vue.inscription.membre",
+	},
+}) %>
+<%- include("../../parties/en‐tête") %>
+		<main><%-
+			include("../../parties/filAriane", {
+				"liens": [ "accueil", "inscription", "inscriptionMembre", ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.inscriptionMembre %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.inscriptionMembre %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<section class="fiche container">
+				<h1 class="title is-3 has-text-centered">
+					<%= langue.formulaire.invitations.inscriptionMembre %>
+				</h1>
+				<form action="/inscription/membre" method="POST">
+					<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+					<div class="field">
+						<label class="label" for="prénom">
+							<%= langue.formulaire.libellés.prénom %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-font"></i>
+							</span>
+							<input type="text" class="input" name="prénom" id="prénom" required="required" placeholder="<%= langue.formulaire.indications.prénom %>" pattern="<%= global.constantes.formatNomVue %>" />
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="nomPatronymique">
+							<%= langue.formulaire.libellés.nomPatronymique %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-font"></i>
+							</span>
+							<input type="text" class="input" name="nomPatronymique" id="nomPatronymique" required="required" placeholder="<%= langue.formulaire.indications.nomPatronymique %>" pattern="<%= global.constantes.formatNomVue %>" spellcheck="false" />
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="nomMarital">
+							<%= langue.formulaire.libellés.nomMarital %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-font"></i>
+							</span>
+							<input type="text" class="input" name="nomMarital" id="nomMarital" placeholder="<%= langue.formulaire.indications.nomMarital %>" pattern="<%= global.constantes.formatNomVue %>" spellcheck="false" />
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label">
+							<%= langue.formulaire.libellés.civilité %>
+						</label>
+						<div class="control has-text-centered">
+							<input type="radio" class="is-checkradio" name="civilité" id="madame" required="required" value="false" />
+							<label class="radio" for="madame">
+								<%= langue.formulaire.libellés.civilitéFemme %>
+							</label>
+							<input type="radio" class="is-checkradio"  name="civilité" id="monsieur"required="required" value="true" />
+							<label class="radio" for="monsieur">
+								<%= langue.formulaire.libellés.civilitéHomme %>
+							</label>
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="dateNaissance">
+							<%= langue.formulaire.libellés.dateNaissance %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-calendar-day"></i>
+							</span>
+							<v-date-picker v-model="dateNaissance" :min-date="dateMinimaleNaissance" :max-date="dateMaximaleNaissance" :input-props="{}" color="teal" locale="<%= langue.langue.code %>">
+								<input type="text" class="input" name="dateNaissance" id="dateNaissance" required="required" placeholder="<%= langue.formulaire.indications.dateNaissance %>" pattern="<%= global.constantes.formatDateVue %>" slot-scope="{ inputProps, inputEvents, }" v-bind="inputProps" v-on="inputEvents" />
+							</v-date-picker>
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="adresseMél">
+							<%= langue.formulaire.libellés.adresseMél %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-envelope"></i>
+							</span>
+							<input type="text" class="input" name="adresseMél" id="adresseMél" required="required" placeholder="<%= langue.formulaire.indications.adresseMél %>" pattern="<%= global.constantes.formatAdresseMélVue %>" />
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="statut">
+							<%= langue.formulaire.libellés.statutPersonnel %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-user-tag"></i>
+							</span>
+							<div class="select">
+								<select name="statut" id="statut" required="required">
+									<option value="" selected="selected">
+										<%= langue.formulaire.indications.choixStatut %>
+									</option><%
+									langue.formulaire.champsRecherche.statuts.forEach((intituléStatut, idStatut) => { %>
+										<option value="<%= idStatut %>"><%= intituléStatut %></option><%
+									}) %>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<div class="field">
+						<div class="control">
+							<input type="checkbox" class="is-checkradio" name="traitementDonnéesPersonnelles" id="traitementDonnéesPersonnelles" required="required" value="true" />
+							<label class="checkbox" for="traitementDonnéesPersonnelles">
+								<%= langue.formulaire.libellés.autorisationTraitementDonnéesPersonnelles %>
+							</label>
+						</div>
+					</div>
+
+					<div class="field">
+						<div class="control">
+							<input type="checkbox" class="is-checkradio" name="traitementDonnéesProfessionnelles" id="traitementDonnéesProfessionnelles" required="required" value="true" />
+							<label class="checkbox" for="traitementDonnéesProfessionnelles">
+								<%= langue.formulaire.libellés.autorisationTraitementDonnéesProfessionnelles %>
+							</label>
+						</div>
+					</div>
+
+					<div class="content">
+						<p class="text has-text-centered">
+							<%= langue.formulaire.libellés.alerteInscriptionMembre[0] %>
+							<br />
+							<%= langue.formulaire.libellés.alerteInscriptionMembre[1] %>
+						</p>
+					</div>
+
+					<div class="field is-grouped is-grouped-centered">
+						<div class="control">
+							<button class="button is-link">
+								<%= langue.formulaire.actions.validation %>
+							</button>
+						</div>
+					</div>
+				</form>
+
+				<hr class="hr" />
+
+				<div class="section has-text-centered">
+					<a class="button is-primary" href="/connexion">
+						<%= langue.formulaire.actions.connexion %>
+					</a>
+				</div>
+			</section>
+		</main>
+<%- include("../../parties/pied") %>

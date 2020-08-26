@@ -1,0 +1,169 @@
+<%- include("../modules/objetForEach") %>
+<%- include("../parties/tête", {
+	"titre": langue.annuaire.titreMembres,
+	"CSS": { "checkradio": true, },
+	"vueJS": {
+		"vueSelect": true,
+		"script": "vue.annuaire.membres",
+	},
+}) %>
+<%- include("../parties/en‐tête") %>
+		<main><%-
+			include("../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireMembres", ],
+			}) %>
+
+			<section class="fiche container">
+				<h1 class="title is-3 has-text-centered">
+					<%= langue.annuaire.titreMembres %>
+				</h1>
+				<form action="/annuaire/membres" method="GET">
+					<label class="label" for="champ">
+						<%= langue.formulaire.libellés.recherche %>
+					</label>
+
+					<div class="field has-addons">
+						<p class="control">
+							<span class="select">
+								<select name="champ" id="champ">
+									<option value=""<% if (formulaireSoumis.champ === "") { %> selected="selected"<% } %>></option><%
+
+									langue.formulaire.champsRecherche.membre.forEach((intituléChamp, idChamp) => { %>
+										<option value="<%= idChamp %>"<% if (formulaireSoumis.champ === idChamp) { %> selected="selected"<% } %>><%= intituléChamp %></option><%
+									}) %>
+								</select>
+							</span>
+						</p>
+						<p class="control is-expanded">
+							<input type="text" class="input" name="recherche" id="recherche" placeholder="<%= langue.formulaire.indications.recherche %>" title="<%= langue.formulaire.aides.recherche %>" value="<%= formulaireSoumis.recherche %>" />
+						</p>
+					</div>
+
+					<fieldset class="fieldset">
+						<legend>
+							<%= langue.formulaire.libellés.filtrage %>
+						</legend>
+
+						<div class="field">
+							<label class="label" for="statut">
+								<%= langue.formulaire.libellés.statut %>
+							</label>
+							<div class="control">
+								<div class="select">
+									<select name="statut" id="statut">
+										<option value=""<% if (formulaireSoumis.statut === "") { %> selected="selected"<% } %>></option><%
+
+										langue.formulaire.champsRecherche.statuts.forEach((intituléStatut, idStatut) => { %>
+											<option value="<%= idStatut %>"<% if (formulaireSoumis.statut === idStatut.toString(10)) { %> selected="selected"<% } %>><%= intituléStatut %></option><%
+										}) %>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<label class="label">
+							<%= langue.formulaire.libellés.organisation %>
+						</label>
+						<div class="field has-addons">
+							<div class="control is-expanded">
+								<v-select label="raisonSociale" :reduce="organisation => organisation.nomUtilisateur" :filterable="false" :options="organisations" @input="définirOrganisation($event)" @search="requesterOrganisations">
+									<template slot="no-options">
+										<%= langue.formulaire.indications.saisieRecherche %>
+									</template>
+
+									<template slot="option" slot-scope="organisation">
+										<div class="d-center">
+											<img :src="organisation.logotype.adresse" /> 
+											{{ organisation.raisonSociale }}
+										</div>
+									</template>
+
+									<template slot="selected-option" slot-scope="organisation">
+										<div class="selected d-center">
+											<img :src="organisation.logotype.adresse" /> 
+											{{ organisation.raisonSociale }}
+										</div>
+									</template>
+								</v-select>
+							</div>
+							<input type="text" name="organisation" id="organisation" :value="organisation" style="display: none;" />
+						</div>
+
+						<div class="field">
+							<label class="label">
+								<%= langue.formulaire.libellés.formation %>
+							</label>
+
+							<v-select label="intituléCourt" v-model="formation" :value="formation" :filterable="false" :options="formations" @input="définirFormation($event)" @search="requesterFormations">
+								<template slot="no-options">
+									<%= langue.formulaire.indications.saisieRecherche %>
+								</template>
+
+								<template slot="option" slot-scope="formation">
+									<div class="d-center">
+										{{ formation.intituléCourt }}
+									</div>
+								</template>
+
+								<template slot="selected-option" slot-scope="formation">
+									<div class="selected d-center">
+										{{ formation.intituléCourt }}
+									</div>
+								</template>
+							</v-select>
+
+							<input type="text" name="formation" :value="formation && formation._id" style="display: none;" />
+						</div>
+
+						<div class="field">
+							<label class="label" for="promotion">
+								<%= langue.formulaire.libellés.promotion %>
+							</label>
+							<div class="control">
+								<div class="select">
+									<select name="promotion" id="promotion">
+										<option value=""<% if (formulaireSoumis.promotion === "") { %> selected="selected"<% } %>></option><%
+
+										langue.listes.promotions.forEach(promotion => { %>
+											<option value="<%= promotion %>"<% if (formulaireSoumis.promotion === promotion) { %> selected="selected"<% } %>><%= promotion %></option><%
+										}) %>
+									</select>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+
+					<div class="field">
+						<label class="label has-text-centered" for="ordreTri">
+							<%= langue.formulaire.libellés.tri %>
+						</label>
+						<div class="control has-text-centered">
+							<input type="radio" class="is-checkradio" name="ordreTri" id="alphabétique" value="asc"<% if (formulaireSoumis.ordreTri === "asc" || !formulaireSoumis.ordreTri) { %> checked="checked"<% } %> />
+							<label class="radio" for="alphabétique">
+								<%= langue.formulaire.libellés.triAlphabétique %>
+							</label>
+							<input type="radio" class="is-checkradio" name="ordreTri" id="antiAlphabétique" value="desc"<% if (formulaireSoumis.ordreTri === "desc") { %>  checked="checked"<% } %> />
+							<label class="radio" for="antiAlphabétique">
+								<%= langue.formulaire.libellés.triAntiAlphabétique %>
+							</label>
+						</div>
+					</div>
+
+					<div class="field is-grouped is-grouped-centered">
+						<div class="control">
+							<button class="button is-link">
+								<%= langue.formulaire.actions.validation %>
+							</button>
+						</div>
+					</div>
+				</form>
+			</section>
+
+			<hr class="hr" /><%-
+
+			include("annuaire", {
+				"objets": membres,
+				"type": "membre",
+			}) %>
+		</main>
+<%- include("../parties/pied") %>

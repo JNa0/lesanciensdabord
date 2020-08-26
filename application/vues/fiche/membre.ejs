@@ -1,0 +1,188 @@
+<%- include("../modules/objetForEach") %>
+<%- include("../parties/tête", {
+	"titre": membre.nomComplet,
+	"CSS": { "tooltip": true, },
+}) %>
+<%- include("../parties/en‐tête") %>
+		<main><%-
+			include("../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireMembres", { "adresse": "/annuaire/membre/" + membre.nomComplet, "intitulé": membre.nomComplet, }, ],
+			}) %>
+
+			<section class="container fiche">
+				<div class="plus"><%
+					if (membre.CV.existe) { %>
+						<a class="icon is-medium" href="<%= membre.CV.adresse %>" title="<%= langue.fiche.messageCV %>" traget="_blank">
+							<i class="fas fa-file-invoice"></i>
+						</a><%
+					}
+					if (droitModification) { %>
+						<a class="icon is-medium" href="<%= URL.pathname %>/modifier" title="<%= langue.fiche.modifierFiche %>">
+							<i class="fas fa-user-edit"></i>
+						</a><%
+					} %>
+					<a class="icon is-medium" href="/signalement?page=<%= URL.pathname %>" title="<%= langue.fiche.signalerFiche %>">
+						<i class="fas fa-exclamation-triangle"></i>
+					</a>
+				</div>
+
+				<div class="carte">
+					<div>
+						<figure class="<%= membre.statut %> has-tooltip-arrow has-tooltip-bottom" data-tooltip="<%= langue.fiche.intitulésStatuts[membre.civilité ? 1 : 0][membre.statut] %>">
+							<img src="<%= membre.photographie.adresse %>" alt="<%= membre.photographie.existe ? (langue.fiche.photographieDe + " " + membre.nomComplet) : langue.fiche.sansPhotographie %>" />
+						</figure><%
+
+						if (membre.promotion) { %>
+							<p class="text has-text-centered"><%
+								if (membre.promotion.annéeEnCours === 2) { %>
+									<%- langue.fiche.deuxièmeAnnée %><%
+								}
+								else if (membre.promotion.annéeEnCours === 1) { %>
+									<%- langue.fiche.premièreAnnée %><%
+								}
+								else { %>
+									<%= langue.fiche.ancienÉtudiant[membre.civilité ? 1 : 0] %><%
+								} %> · <%= langue.fiche.promotion %> <%= membre.promotion.dateSortie %><%
+								%>
+							</p><%
+						} %>
+					</div>
+					<div>
+						<h1 class="title is-2">
+							<%= membre.nomComplet %>
+						</h1><%
+
+						if (membre.nomMarital) { %>
+							<p class="subtitle is-4 is-spaced tab-1">
+								<%= membre.civilité ? langue.fiche.né : langue.fiche.née %> <%= membre.nomPatronymique %>
+							</p><%
+						}
+
+						if (membre.inscriptions.length !== 0) {
+							const dernièreInscription = membre.inscriptions[0]
+
+							// Si la formation n’est pas terminée (sa fin est postérieure à jà)
+							if (dernièreInscription.dateSortie >= new Date()) { %>
+								<p class="title is-3 is-spaced">
+									<%= dernièreInscription.formation.intituléCourt %>
+								</p><%
+							}
+						}
+
+						if (membre.posteActuel) { %>
+							<p class="subtitle is-3 is-unspaced">
+								<%= membre.posteActuel %>
+							</p><%
+						}
+
+						if (membre.service) { %>
+							<p class="subtitle is-3 is-unspaced">
+								<a href="/organisation/<%= membre.service.organisation.nomUtilisateur %>">
+									<%= membre.service.organisation.raisonSociale %>
+								</a>
+							</p>
+							<p class="subtitle is-5 tab-1">
+								<%= membre.service.nom %>, <%= membre.service.ville %>
+							</p><%
+						} %>
+					</div>
+				</div><%
+
+				if (membre.recherche.typeEmploi && ([ "stage", "alternance", ].includes(membre.recherche.typeEmploi) || droitModification)) { %>
+					<div class="bloc">
+						<p class="title is-4 is-unspaced">
+							<%= membre.civilité ? langue.fiche.intéressé : langue.fiche.intéressée %> <%= langue.travail.typesEmploi[membre.recherche.typeEmploi].déterminant %> <%= langue.travail.typesEmploi[membre.recherche.typeEmploi].intitulé %> <%= langue.général.introductif %> <%= membre.recherche.domaines.length == 1 ? langue.listes.domaines[membre.recherche.domaines[0]].intitulé : membre.recherche.domaines.map(domaine => langue.listes.domaines[domaine].intitulé).slice(0, -1).join(langue.général.disjonction + langue.général.introductif) + langue.général.disjonctionFinale + langue.général.introductif + " " + langue.listes.domaines[membre.recherche.domaines.slice(-1)[0]].intitulé %>
+						</p>
+						<p class="subtitle is-5 tab-1">
+							<%= membre.recherche.duréeEmploi.quantité %> <%= langue.travail.duréesEmploi[membre.recherche.duréeEmploi.qualité].intitulé %> · <%= langue.général.débutIntervalle %> <%= membre.recherche.début.toLocaleDateString() %> <%= langue.général.finIntervalle %> <%= membre.recherche.fin.toLocaleDateString() %>
+						</p>
+					</div><%
+				}
+
+				if (membre.lienSitePersonnel || membre.lienLinkedIn || membre.lienViadeo || (droitModification && (membre.adresseMél || membre.numéroTéléphone))) { %>
+					<div class="bloc columns"><%
+						if (membre.lienSitePersonnel) { %>
+							<div class="lien column is-mobile is-half-desktop">
+								<a href="http://<%= membre.lienSitePersonnel %>" target="_blank">
+									<span class="icon is-small">
+										<i class="fas fa-globe"></i>
+									</span>
+									<%= membre.lienSitePersonnel %>
+								</a>
+							</div><%
+						}
+
+						if (membre.lienLinkedIn) { %>
+							<div class="lien column is-mobile is-half-desktop">
+								<a href="https://<%= membre.lienLinkedIn %>" target="_blank">
+									<span class="icon is-small">
+										<i class="fab fa-linkedin"></i>
+									</span>
+									<%= membre.lienLinkedIn %>
+								</a>
+							</div><%
+						}
+
+						if (membre.lienViadeo) { %>
+							<div class="lien column is-mobile is-half-desktop">
+								<a href="https://<%= membre.lienViadeo %>" target="_blank">
+									<span class="icon is-small">
+										<i class="fab fa-viadeo"></i>
+									</span>
+									<%= membre.lienViadeo %>
+								</a>
+							</div><%
+						}
+
+						if (droitModification) {
+							if (membre.adresseMél) { %>
+								<div class="lien column is-mobile is-half-desktop">
+									<a href="mailto:<%= membre.adresseMél %>">
+										<span class="icon is-small">
+											<i class="fas fa-envelope"></i>
+										</span>
+										<%= membre.adresseMél %>
+									</a>
+								</div><%
+							}
+
+							if (membre.numéroTéléphone) { %>
+								<div class="lien column is-mobile is-half-desktop">
+									<a href="tel:<%= membre.numéroTéléphone %>">
+										<span class="icon is-small">
+											<i class="fas fa-phone"></i>
+										</span>
+										<%= membre.numéroTéléphone %>
+									</a>
+								</div><%
+							}
+						} %>
+					</div><%
+				}
+
+				if (membre.inscriptions.length !== 0) {%>
+					<div class="bloc">
+						<h1 class="title is-3 is-spaced">
+							<%= langue.fiche.formations %>
+						</h1><%
+						membre.inscriptions.forEach(function (inscription) { %>
+							<div class="formation">
+								<h1 class="subtitle is-4 is-unspaced">
+									<%= inscription.formation.intituléComplet %>
+								</h1>
+								<h2 class="subtitle is-5 is-unspaced">
+									<%= inscription.établissement.nom %>
+								</h2>
+								<p class="text tab-1">
+									<%= inscription.dateEntrée.getFullYear() %> – <%= inscription.dateSortie.getFullYear() %>
+								</p>
+								<p class="text tab-1">
+									<%= inscription.établissement.ville %> (<%= inscription.établissement.codePostal %>), <%= inscription.établissement.institution.nom %>
+								</p>
+							</div><%
+						}) %>
+					</div><%
+				} %>
+			</section>
+		</main>
+<%- include("../parties/pied") %>

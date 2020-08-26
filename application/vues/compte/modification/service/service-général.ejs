@@ -1,0 +1,191 @@
+<%- include("../../../modules/objetForEach") %>
+<%- include("../../../parties/tête", {
+	"titre": service.nom,
+	"vueJS": {
+		"vueSelect": modificationComplète || false,
+		"script": "vue.modification.service.général",
+	},
+}) %>
+<%- include("../../../parties/en‐tête") %>
+		<main><%-
+			include("../../../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireOrganisations", { "adresse": "/organisation/" + service.organisation.nomUtilisateur, "intitulé": service.organisation.raisonSociale, }, { "adresse": "/organisation/service/" + service._id, "intitulé": service.nom, }, { "adresse": "/organisation/service/" + service.nom + "/modifier", "intitulé": langue.filAriane.modification, }, ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.modificationService %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.modificationService %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<div class="bloc"><%-
+				include("service-navigation", { "page": "général", }) %>
+
+				<section class="fiche container">
+					<form action="<%= URL.pathname %>" method="POST" data-organisation="<%= JSON.stringify(service.organisation) %>">
+						<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+						<div class="bloc">
+							<h1 class="title title-2">
+								<%= langue.fiche.informationsGénérales %>
+							</h1>
+							<div>
+								<div class="field">
+									<label class="label" for="nom">
+										<%= langue.formulaire.libellés.nom %>
+									</label>
+									<div class="control has-icons-left">
+										<span class="icon is-small is-left">
+											<i class="fas fa-font"></i>
+										</span>
+										<input type="text" class="input" name="nom" id="nom" required="required" <% if (!modificationComplète) { %> disabled="disabled"<% } %> placeholder="<%= langue.formulaire.indications.nom %>" pattern="<%= global.constantes.formatIntituléVue %>" spellcheck="false" value="<%= service.nom %>" />
+									</div>
+								</div>
+
+								<div class="field"><%
+									if (!modificationComplète) { %>
+										<label class="label" for="organiastion">
+											<%= langue.formulaire.libellés.organisation %>
+										</label>
+										<div class="control has-icons-left">
+											<span class="icon is-small is-left">
+												<i class="fas fa-building"></i>
+											</span>
+											<input type="text" class="input" disabled="disabled" placeholder="<%= langue.formulaire.indications.organisation %>" pattern="<%= global.constantes.formatIntituléVue %>" spellcheck="false" value="<%= service.organisation.raisonSociale %>" />
+										</div><%
+									}
+
+									else { %>
+										<div class="columns">
+											<div class="column is-mobile is-two-thirds-desktop">
+												<label class="label">
+													<%= langue.formulaire.libellés.organisation %>
+												</label>
+												<v-select id="sélectionOrganisation" label="raisonSociale" v-model="organisation" :value="organisation" :filterable="false" :options="organisations" @input="définirOrganisation($event)" @search="requesterOrganisations">
+													<template slot="no-options">
+														<%= langue.formulaire.indications.saisieRecherche %>
+													</template>
+
+													<template slot="option" slot-scope="organisation">
+														<div class="d-center">
+															<img :src="organisation.logotype.adresse" /> 
+															{{ organisation.raisonSociale }}
+														</div>
+													</template>
+
+													<template slot="selected-option" slot-scope="organisation">
+														<div class="selected d-center">
+															<img :src="organisation.logotype.adresse" /> 
+															{{ organisation.raisonSociale }}
+														</div>
+													</template>
+												</v-select>
+
+												<input type="text" name="organisation" id="organisation" :value="organisation && organisation.nomUtilisateur" style="display: none;" />
+											</div>
+
+											<div class="column is-mobile is-one-third-desktop has-text-centered">
+												<p class="label">
+													<%= langue.formulaire.libellés.organisationManquante %>
+												</p>
+												<div class="control">
+													<a class="button is-info" href="/inscription/organisation" target="_blank">
+														<%= langue.formulaire.actions.créationOrganisation %>
+													</a>
+												</div>
+											</div>
+										</div><%
+									} %>
+								</div>
+
+								<div class="field">
+									<label class="label" for="ville">
+										<%= langue.formulaire.libellés.ville %>
+									</label>
+									<div class="control has-icons-left">
+										<span class="icon is-small is-left">
+											<i class="fas fa-city"></i>
+										</span>
+										<input type="text" class="input" name="ville" id="ville" required="required" <% if (!modificationComplète) { %> disabled="disabled"<% } %> placeholder="<%= langue.formulaire.indications.ville %>" pattern="<%= global.constantes.formatNomVue %>" value="<%= service.ville %>" />
+									</div>
+								</div>
+
+								<div class="field">
+									<label class="label" for="codePostal">
+										<%= langue.formulaire.libellés.codePostal %>
+									</label>
+									<div class="control has-icons-left">
+										<span class="icon is-small is-left">
+											<i class="fas fa-map-marker-alt"></i>
+										</span>
+										<input type="text" class="input" name="codePostal" id="codePostal" required="required" <% if (!modificationComplète) { %> disabled="disabled"<% } %> placeholder="<%= langue.formulaire.indications.codePostal %>" pattern="<%= global.constantes.formatCodePostalVue %>" value="<%= service.codePostal %>" />
+									</div>
+								</div>
+
+								<div class="field">
+									<label class="label" for="pays">
+										<%= langue.formulaire.libellés.pays %>
+									</label><%
+
+									if (!modificationComplète) { %>
+										<div class="control has-icons-left">
+											<span class="icon is-small is-left">
+												<i class="fas fa-flag"></i>
+											</span>
+											<input type="text" class="input" disabled="disabled" placeholder="<%= langue.formulaire.indications.pays %>" spellcheck="false" value="<%= langue.listes.pays[service.pays].nom %>" />
+										</div><%
+									}
+
+									else { %>
+										<div class="control has-icons-left">
+											<span class="icon is-small is-left">
+												<i class="fas fa-flag"></i>
+											</span>
+											<div class="select">
+												<select name="pays" id="pays" required="required">
+													<option value="FR"<% if (service.organisation.pays === "FR") { %>selected="selected"<% } %>>
+														<%= langue.listes.pays.FR.nom %>
+													</option><%
+
+													langue.listes.continents.forEach(continent => { %>
+														<optgroup label="<%= continent %>"><%
+															langue.listes.pays.forEach((pays, code) => {
+																if (pays.continent === continent) { %>
+																	<option value="<%= code %>"<% if (service.organisation.pays === code) { %>selected="selected"<% } %>><%= pays.nom %></option><%
+																}
+															}) %>
+														</optgroup><%
+													}) %>
+												</select>
+											</div>
+										</div><%
+									} %>
+								</div>
+							</div>
+						</div>
+
+						<div class="bloc has-text-centered">
+							<button type="submit" class="button is-medium is-success" type="submit">
+								<%= langue.formulaire.actions.validationModification %>
+							</button>
+						</div>
+					</form>
+				</section>
+			</div>
+		</main>
+<%- include("../../../parties/pied") %>

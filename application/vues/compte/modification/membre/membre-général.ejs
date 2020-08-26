@@ -1,0 +1,211 @@
+<%- include("../../../modules/objetForEach") %>
+<%- include("../../../parties/tête", {
+	"titre": membre.nomComplet,
+	"CSS": { "checkradio": true, },
+	"vueJS": {
+		"vueCalendar": modificationComplète || false,
+		"script": "vue.modification.membre.général",
+	},
+}) %>
+<%- include("../../../parties/en‐tête") %>
+		<main><%-
+			include("../../../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireMembres", { "adresse": "/membre/" + membre.nomUtilisateur, "intitulé": membre.nomComplet, }, { "adresse": "/membre/" + membre.nomUtilisateur + "/modifier", "intitulé": langue.filAriane.modification, }, ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.modificationMembre %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.modificationMembre %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<div class="bloc"><%-
+				include("membre-navigation", { "page": "général", }) %>
+
+				<section class="fiche container">
+					<form action="<%= URL.pathname %>?_csrf=<%= jetonCSRF %>" method="POST" enctype="multipart/form-data" data-date-naissance="<%= membre.dateNaissance.toString() %>">
+						<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+						<div class="bloc">
+							<h1 class="title title-2">
+								<%= langue.fiche.informationsGénérales %>
+							</h1>
+							<div class="carte">
+								<div class="is-flex-centered">
+									<figure class="<%= membre.statut %> has-tooltip-arrow has-tooltip-top" data-tooltip="<%= langue.fiche.intitulésStatuts[membre.civilité ? 1 : 0][membre.statut] %>">
+										<img id="photographie" data-src="<%= membre.photographie.adresse %>" data-default-src="<%= membre.photographie.adresseParDéfaut %>" :src="sourceImage" alt="<%= membre.photographie.existe ? (langue.fiche.photographieDe + " " + membre.nomComplet) : langue.fiche.sansPhotographie %>" />
+									</figure>
+
+									<div class="is-flex-spaced">
+										<div class="file is-info is-spaced">
+											<label class="file-label">
+												<input type="file" class="file-input" name="photographie" accept="<%= global.constantes.formatsPhotographie.join(",") %>" @change="chargerImage" />
+												<span class="file-cta">
+													<span class="file-icon">
+														<i class="fas fa-upload"></i>
+													</span>
+													<span class="file-label">
+														<%= langue.formulaire.libellés.choixImage %>
+													</span>
+												</span>
+											</label>
+										</div>
+
+										<input type="checkbox" name="suppressionImage" ref="suppressionImage"<% if (!membre.photographie.existe) { %> checked="checked"<% } %> style="display: none;" />
+
+										<button type="button" class="button is-danger" @click="supprimerImage">
+											<%= langue.formulaire.actions.suppression %>
+										</button>
+									</div>
+								</div>
+
+								<div>
+									<div class="field">
+										<label class="label" for="prénom">
+											<%= langue.formulaire.libellés.prénom %>
+										</label>
+										<div class="control has-icons-left">
+											<span class="icon is-small is-left">
+												<i class="fas fa-font"></i>
+											</span>
+											<input type="text" class="input" name="prénom" id="prénom" required="required"<% if (!modificationComplète) { %> disabled="disabled"<% } %> placeholder="<%= langue.formulaire.indications.prénom %>" spellcheck="false" value="<%= membre.prénom %>" />
+										</div>
+									</div>
+
+									<div class="field">
+										<label class="label" for="nomPatronymique">
+											<%= langue.formulaire.libellés.nomPatronymique %>
+										</label>
+										<div class="control has-icons-left">
+											<span class="icon is-small is-left">
+												<i class="fas fa-font"></i>
+											</span>
+											<input type="text" class="input" name="nomPatronymique" id="nomPatronymique" required="required"<% if (!modificationComplète) { %> disabled="disabled"<% } %> placeholder="<%= langue.formulaire.indications.nomPatronymique %>" spellcheck="false" value="<%= membre.nomPatronymique %>" />
+										</div>
+									</div>
+
+									<div class="field">
+										<label class="label" for="nomMarital">
+											<%= langue.formulaire.libellés.nomMarital %>
+										</label>
+										<div class="control has-icons-left">
+											<span class="icon is-small is-left">
+												<i class="fas fa-font"></i>
+											</span>
+											<input type="text" class="input" name="nomMarital" id="nomMarital" placeholder="<%= langue.formulaire.indications.nomMarital %>" spellcheck="false" value="<%= membre.nomMarital %>" />
+										</div>
+									</div>
+
+									<div class="field">
+										<label class="label" for="dateNaissance">
+											<%= langue.formulaire.libellés.dateNaissance %>
+										</label><%
+
+										if (!modificationComplète) { %>
+											<div class="control has-icons-left">
+												<span class="icon is-small is-left">
+													<i class="fas fa-calendar-day"></i>
+												</span>
+												<input type="text" class="input" disabled="disabled" spellcheck="false" value="<%= membre.dateNaissance.toLocaleDateString() %>" />
+											</div><%
+										}
+
+										else { %>
+											<v-date-picker v-model="dateNaissance" :min-date="dateMinimaleNaissance" :max-date="dateMaximaleNaissance" :input-props="{}" color="teal" locale="<%= langue.langue.code %>">
+												<input type="text" class="input" name="dateNaissance" id="dateNaissance" required="required" placeholder="<%= langue.formulaire.indications.dateNaissance %>" pattern="<%= global.constantes.formatDateVue %>" slot-scope="{ inputProps, inputEvents, }" v-bind="inputProps" v-on="inputEvents" />
+											</v-date-picker><%
+										} %>
+									</div>
+
+									<div class="field">
+										<label class="label">
+											<%= langue.formulaire.libellés.civilité %>
+										</label><%
+
+										if (!modificationComplète) { %> 
+											<div class="control has-icons-left">
+												<span class="icon is-small is-left">
+													<i class="fas fa-user-friends"></i>
+												</span>
+												<input type="text" class="input" disabled="disabled" spellcheck="false" value="<%= langue.fiche.intitulésCivilité[membre.civilité ? 1 : 0] %>" />
+											</div><%
+										}
+
+										else { %>
+											<div class="control has-text-centered">
+												<input type="radio" class="is-checkradio" name="civilité" id="madame" required="required" value="false"<% if (!membre.civilité) { %> checked="checked"<% } %> />
+												<label class="radio" for="madame">
+													<%= langue.formulaire.libellés.civilitéFemme %>
+												</label>
+												<input type="radio" class="is-checkradio" name="civilité" id="monsieur" required="required" value="true"<% if (membre.civilité) { %> checked="checked"<% } %> />
+												<label class="radio" for="monsieur">
+													<%= langue.formulaire.libellés.civilitéHomme %>
+												</label>
+											</div><%
+										} %>
+									</div>
+								</div>
+							</div>
+
+							<div class="bloc">
+								<div class="field">
+									<p class="label">
+										<%= langue.formulaire.libellés.CV %>
+									</p>
+
+									<div class="flex-row flex-gap">
+										<div class="file has-name is-info flex-grow">
+											<label class="file-label">
+												<input type="file" class="file-input" name="CV" id="CV" accept="<%= global.constantes.formatsCV.join(",") %>" @change="définirCV($event)" />
+												<span class="file-cta">
+													<span class="file-icon">
+														<i class="fas fa-upload"></i>
+													</span>
+													<span class="file-label">
+														<%= langue.formulaire.libellés.choixFichier %>
+													</span>
+												</span>
+												<span class="file-name is-expanded" v-show="!this.suppressionCV">
+													<%= langue.formulaire.indications.CVDéposé %>
+												</span>
+												<span class="file-name is-expanded" v-show="this.suppressionCV">
+													<%= langue.formulaire.indications.CVManquant %>
+												</span>
+											</label>
+										</div>
+
+										<input type="checkbox" name="suppressionCV" id="suppressionCV" ref="suppressionCV"<% if (!membre.CV.existe) { %> checked="checked"<% } %> style="display: none;" />
+
+										<button type="button" class="button is-danger" @click="supprimerCV">
+											<%= langue.formulaire.actions.suppression %>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="bloc has-text-centered">
+							<button type="submit" class="button is-medium is-success" type="submit">
+								<%= langue.formulaire.actions.validationModification %>
+							</button>
+						</div>
+					</form>
+				</section>
+			</div>
+		</main>
+<%- include("../../../parties/pied") %>

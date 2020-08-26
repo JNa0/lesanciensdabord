@@ -1,0 +1,208 @@
+<%- include("../../../modules/objetForEach") %>
+<%- include("../../../parties/tête", {
+	"titre": organisation.raisonSociale,
+	"vueJS": {
+		"script": "vue.modification.organisation.général",
+	},
+}) %>
+<%- include("../../../parties/en‐tête") %>
+		<main><%-
+			include("../../../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireOrganisations", { "adresse": "/organisation/" + organisation.nomUtilisateur, "intitulé": organisation.raisonSociale, }, { "adresse": "/organisation/" + organisation.nomUtilisateur + "/modifier", "intitulé": langue.filAriane.modification, }, ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.modificationOrganisation %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.modificationOrganisation %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<div class="bloc"><%-
+				include("organisation-navigation", { "page": "général", }) %>
+
+				<section class="fiche container">
+					<form action="<%= URL.pathname %>?_csrf=<%= jetonCSRF %>" method="POST" enctype="multipart/form-data">
+						<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+						<div class="bloc">
+							<h1 class="title title-2">
+								<%= langue.fiche.informationsGénérales %>
+							</h1>
+							<div class="carte">
+								<div class="is-flex-centered">
+									<figure class="organisation">
+										<img id="logotype" data-src="<%= organisation.logotype.adresse %>" data-default-src="<%= organisation.logotype.adresseParDéfaut %>" :src="sourceImage" alt="<%= organisation.logotype.existe ? (langue.fiche.logotypeDe + " " + organisation.raisonSociale) : langue.fiche.sansLogotype %>" />
+									</figure>
+
+									<div class="is-flex-spaced">
+										<div class="file is-info is-spaced">
+											<label class="file-label">
+												<input type="file" class="file-input" name="logotype" accept="<%= global.constantes.formatsLogotype.join(",") %>" @change="chargerImage" />
+												<span class="file-cta">
+													<span class="file-icon">
+														<i class="fas fa-upload"></i>
+													</span>
+													<span class="file-label">
+														<%= langue.formulaire.libellés.choixImage %>
+													</span>
+												</span>
+											</label>
+										</div>
+
+										<input type="checkbox" name="suppressionImage" ref="suppressionImage"<% if (!organisation.logotype.existe) { %> checked="checked"<% } %> style="display: none;" />
+
+										<button type="button" class="button is-danger" @click="supprimerImage">
+											<%= langue.formulaire.actions.suppression %>
+										</button>
+									</div>
+								</div>
+
+								<div>
+									<div class="field">
+										<label class="label" for="raisonSociale">
+											<%= langue.formulaire.libellés.raisonSociale %>
+										</label>
+										<div class="control has-icons-left">
+											<span class="icon is-small is-left">
+												<i class="fas fa-font"></i>
+											</span>
+											<input type="text" class="input" name="raisonSociale" id="raisonSociale" required="required" <% if (!modificationComplète) { %> disabled="disabled"<% } %> placeholder="<%= langue.formulaire.indications.raisonSociale %>" pattern="<%= global.constantes.formatIntituléVue %>" spellcheck="false" value="<%= organisation.raisonSociale %>" />
+										</div>
+									</div>
+
+									<div class="field">
+										<label class="label" for="effectif">
+											<%= langue.formulaire.libellés.effectif %>
+										</label>
+										<div class="control has-icons-left">
+											<span class="icon is-small is-left">
+												<i class="fas fa-users"></i>
+											</span>
+											<input type="number" class="input" name="effectif" id="effectif" placeholder="<%= langue.formulaire.indications.effectif %>" pattern="<%= global.constantes.formatNombreVue %>" min="1" value="<%= organisation.effectif %>" />
+										</div>
+									</div>
+
+									<div class="field">
+										<label class="label" for="secteurActivité">
+											<%= langue.formulaire.libellés.secteurActivité %>
+										</label><%
+
+										if (!modificationComplète) { %>
+											<div class="control has-icons-left">
+												<span class="icon is-small is-left">
+													<i class="fas fa-industry"></i>
+												</span>
+												<input type="text" class="input" disabled="disabled" placeholder="<%= langue.formulaire.indications.secteurActivité %>" pattern="<%= global.constantes.formatIntituléVue %>" spellcheck="false" value="<%= langue.listes.secteursActivité[organisation.secteurActivité] %>" />
+											</div><%
+										}
+
+										else { %>
+											<div class="control has-icons-left">
+												<span class="icon is-small is-left">
+													<i class="fas fa-industry"></i>
+												</span>
+												<div class="select">
+													<select name="secteurActivité" id="secteurActivité">
+														<option value=""></option><%
+
+													langue.listes.secteursActivité.forEach((intituléChamp, idChamp) => { %>
+														<option value="<%= idChamp %>"<% if (organisation.secteurActivité === idChamp) { %> selected="selected"<% } %>><%= intituléChamp %></option><%
+													}) %>
+													</select>
+												</div>
+											</div><%
+										} %>
+									</div>
+
+									<div class="field">
+										<label class="label" for="villeSiègeSocial">
+											<%= langue.formulaire.libellés.villeSiègeSocial %>
+										</label>
+										<div class="control has-icons-left">
+											<span class="icon is-small is-left">
+												<i class="fas fa-city"></i>
+											</span>
+											<input type="text" class="input" name="villeSiègeSocial" id="villeSiègeSocial" required="required" <% if (!modificationComplète) { %> disabled="disabled"<% } %> placeholder="<%= langue.formulaire.indications.ville %>" pattern="<%= global.constantes.formatNomVue %>" value="<%= organisation.villeSiègeSocial %>" />
+										</div>
+									</div>
+
+									<div class="field">
+										<label class="label" for="codePostalSiègeSocial">
+											<%= langue.formulaire.libellés.codePostalSiègeSocial %>
+										</label>
+										<div class="control has-icons-left">
+											<span class="icon is-small is-left">
+												<i class="fas fa-map-marker-alt"></i>
+											</span>
+											<input type="text" class="input" name="codePostalSiègeSocial" id="codePostalSiègeSocial" required="required" <% if (!modificationComplète) { %> disabled="disabled"<% } %> placeholder="<%= langue.formulaire.indications.codePostal %>" pattern="<%= global.constantes.formatCodePostalVue %>" value="<%= organisation.codePostalSiègeSocial %>" />
+										</div>
+									</div>
+
+									<div class="field">
+										<label class="label" for="paysSiègeSocial">
+											<%= langue.formulaire.libellés.paysSiègeSocial %>
+										</label><%
+
+										if (!modificationComplète) { %>
+											<div class="control has-icons-left">
+												<span class="icon is-small is-left">
+													<i class="fas fa-flag"></i>
+												</span>
+												<input type="text" class="input" disabled="disabled" placeholder="<%= langue.formulaire.indications.paysSiègeSocial %>" value="<%= langue.listes.pays[organisation.paysSiègeSocial].nom %>" />
+											</div><%
+										}
+
+										else { %>
+											<div class="control has-icons-left">
+												<span class="icon is-small is-left">
+													<i class="fas fa-flag"></i>
+												</span>
+												<div class="select">
+													<select name="paysSiègeSocial" id="paysSiègeSocial" required="required">
+														<option value="FR"<% if (organisation.paysSiègeSocial === "FR") { %>selected="selected"<% } %>>
+															<%= langue.listes.pays.FR.nom %>
+														</option><%
+
+														langue.listes.continents.forEach(continent => { %>
+															<optgroup label="<%= continent %>"><%
+																langue.listes.pays.forEach((pays, code) => {
+																	if (pays.continent === continent) { %>
+																		<option value="<%= code %>"<% if (organisation.paysSiègeSocial === code) { %>selected="selected"<% } %>><%= pays.nom %></option><%
+																	}
+																}) %>
+															</optgroup><%
+														}) %>
+													</select>
+												</div>
+											</div><%
+										} %>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="bloc has-text-centered">
+							<button type="submit" class="button is-medium is-success" type="submit">
+								<%= langue.formulaire.actions.validationModification %>
+							</button>
+						</div>
+					</form>
+				</section>
+			</div>
+		</main>
+<%- include("../../../parties/pied") %>

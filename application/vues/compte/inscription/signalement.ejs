@@ -1,0 +1,88 @@
+<%- include("../../parties/tête", {
+	"titre": langue.formulaire.libellés.inscriptionÉtablissement,
+	"vueJS": {
+		"vueSelect": true,
+		"script": "vue.inscription.établissement",
+	},
+}) %>
+<%- include("../../parties/en‐tête") %>
+		<main><%-
+			include("../../parties/filAriane", {
+				"liens": [ "accueil", "inscription", "inscriptionÉtablissement", ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.inscriptionÉtablissement %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.inscriptionÉtablissement %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<section class="fiche container">
+				<h1 class="title is-3 has-text-centered">
+					<%= langue.formulaire.invitations.inscriptionÉtablissement %>
+				</h1>
+				<form action="/signalement" method="POST">
+					<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+					<div class="field">
+						<label class="label" for="motif">
+							<%= langue.formulaire.libellés.motif %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-exclamation"></i>
+							</span>
+							<input type="text" class="input" name="motif" id="motif" required="required" placeholder="<%= langue.formulaire.indications.motif %>" pattern="<%= global.constantes.formatIntituléVue %>" />
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="adresse">
+							<%= langue.formulaire.libellés.adresse %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-globe"></i>
+							</span>
+							<input type="text" class="input" name="adresse" id="adresse" required="required" placeholder="<%= langue.formulaire.indications.adresse %>" value="<%= URL.query?.page %>" />
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="description">
+							<%= langue.formulaire.libellés.description %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-font"></i>
+							</span>
+							<textarea class="input" name="description" id="description" required="required" placeholder="<%= langue.formulaire.indications.description %>"></textarea>
+						</div>
+					</div>
+
+					<div class="field is-grouped is-grouped-centered">
+						<div class="control">
+							<button class="button is-link">
+								<%= langue.formulaire.actions.validation %>
+							</button>
+						</div>
+					</div>
+				</form>
+			</section>
+		</main>
+<%- include("../../parties/pied") %>

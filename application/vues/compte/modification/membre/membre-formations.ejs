@@ -1,0 +1,170 @@
+<%- include("../../../modules/objetForEach") %>
+<%- include("../../../parties/tête", {
+	"titre": membre.nomComplet,
+	"vueJS": {
+		"vueSelect": true,
+		"vueCalendar": true,
+		"script": "vue.modification.membre.formations",
+	},
+}) %>
+<%- include("../../../parties/en‐tête") %>
+		<main><%-
+			include("../../../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireMembres", { "adresse": "/membre/" + membre.nomUtilisateur, "intitulé": membre.nomComplet, }, { "adresse": "/membre/" + membre.nomUtilisateur + "/modifier", "intitulé": langue.filAriane.modification, }, ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.modificationMembre %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.modificationMembre %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<div class="bloc"><%-
+				include("membre-navigation", { "page": "formations", }) %>
+
+				<section class="fiche container">
+					<form action="<%= URL.pathname %>" method="POST" data-inscriptions="<%= JSON.stringify(membre.inscriptions) %>">
+						<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+						<div class="bloc" id="inscriptions">
+							<h1 class="title title-3">
+								<%= langue.fiche.formations %>
+							</h1>
+							<div class="field" v-for="(inscription, indice) in inscriptions" :key="inscription._id">
+								<div class="is-flex is-flex-row flex-spaced is-spaced">
+									<h2 class="subtitle title-3" for="sélectionFormation">
+										<%= langue.formulaire.libellés.inscription %>
+									</h2>
+									<button type="button" class="delete is-medium" @click="supprimerFormation(indice)"></button>
+								</div>
+
+								<div class="columns">
+									<div class="column is-mobile is-two-thirds-desktop">
+										<label class="label">
+											<%= langue.formulaire.libellés.formation %>
+										</label>
+
+										<v-select label="intituléCourt" v-model="inscription.formation" :value="inscription.formation" :filterable="false" :options="formations" @input="définirFormation($event)" @search="requesterFormations">
+											<template slot="no-options">
+												<%= langue.formulaire.indications.saisieRecherche %>
+											</template>
+
+											<template slot="option" slot-scope="formation">
+												<div class="d-center">
+													{{ formation.intituléCourt }}
+												</div>
+											</template>
+
+											<template slot="selected-option" slot-scope="formation">
+												<div class="selected d-center">
+													{{ formation.intituléCourt }}
+												</div>
+											</template>
+										</v-select>
+
+										<input type="text" name="formation" :value="inscription.formation && inscription.formation._id" style="display: none;" />
+									</div>
+
+									<div class="column is-mobile is-one-third-desktop has-text-centered">
+										<p class="label">
+											<%= langue.formulaire.libellés.formationManquante %>
+										</p>
+										<div class="control">
+											<a class="button is-info" href="/inscription/formation" target="_blank">
+												<%= langue.formulaire.actions.créationFormation %>
+											</a>
+										</div>
+									</div>
+
+									<div class="column is-mobile is-two-thirds-desktop">
+										<label class="label">
+											<%= langue.formulaire.libellés.Établissement %>
+										</label>
+
+										<v-select label="nom" v-model="inscription.établissement" :value="inscription.établissement" :filterable="false" :options="établissements" @input="définirÉtablissement($event)" @search="requesterEtablissements">
+											<template slot="no-options">
+												<%= langue.formulaire.indications.saisieRecherche %>
+											</template>
+
+											<template slot="option" slot-scope="établissement">
+												<div class="d-center">
+													{{ établissement.nom }}
+												</div>
+											</template>
+
+											<template slot="selected-option" slot-scope="établissement">
+												<div class="selected d-center">
+													{{ établissement.nom }}
+												</div>
+											</template>
+										</v-select>
+
+										<input type="text" name="établissement" :value="inscription.établissement && inscription.établissement._id" style="display: none;" />
+									</div>
+
+									<div class="column is-mobile is-one-third-desktop has-text-centered">
+										<p class="label">
+											<%= langue.formulaire.libellés.ÉtablissementManquant %>
+										</p>
+										<div class="control">
+											<a class="button is-info" href="/inscription/établissement" target="_blank">
+												<%= langue.formulaire.actions.créationÉtablissement %>
+											</a>
+										</div>
+									</div>
+
+									<div class="column is-mobile is-desktop">
+										<div class="field">
+											<label class="label" for="périodeFormation">
+												<%= langue.formulaire.libellés.périodeFormation %>
+											</label>
+											<div class="control has-icons-left">
+												<span class="icon is-small is-left">
+													<i class="fas fa-calendar-alt"></i>
+												</span>
+												<v-date-picker mode="range" v-model="inscription.période" :min-date="dateMinimaleFormation" :max-date="dateMaximaleFormation" :input-props="{}" color="teal" locale="<%= langue.langue.code %>">
+													<input type="text" class="input" name="périodeFormation" id="intervalleValidité" required="required"  placeholder="<%= langue.formulaire.indications.périodeValidité %>"pattern="<%= global.constantes.formatPériodeVue %>" slot-scope="{ inputProps, inputEvents, }" v-bind="inputProps" v-on="inputEvents" />
+												</v-date-picker>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="control has-text-centered">
+								<button type="button" class="button is-rounded" @click="ajouterFormation($event)">
+									<span class="icon is-small is-left">
+										<i class="fas fa-plus"></i>
+									</span>
+									<span>
+										<%= langue.formulaire.libellés.ajoutFormation %>
+									</span>
+								</button>
+							</div>
+						</div>
+
+						<div class="bloc has-text-centered">
+							<button type="submit" class="button is-medium is-success" type="submit">
+								<%= langue.formulaire.actions.validationModification %>
+							</button>
+						</div>
+					</form>
+				</section>
+			</div>
+		</main>
+<%- include("../../../parties/pied") %>

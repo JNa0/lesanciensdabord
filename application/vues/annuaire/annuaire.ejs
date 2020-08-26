@@ -1,0 +1,20 @@
+<%
+		if (nombreRésultats === 0) { %>
+			<section class="container content annuaire is-flex-centered">
+				<p class="subtitle is-3">
+					<%= langue.formulaire.libellés.nulRésultat %>
+				</p>
+			</section><%
+		}
+
+		else { %><%-
+			include("pagination") %>
+
+			<section class="container content annuaire"><%
+				objets.forEach(objet => { %><%-
+					include(`carte/${type}`, { [ type ]: objet, }) %><%
+				}) %>
+			</section><%-
+
+			include("pagination") %><%
+		} %>

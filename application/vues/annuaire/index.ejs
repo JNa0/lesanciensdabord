@@ -1,0 +1,31 @@
+<%- include("../parties/tête", { "titre": "Annuaire", }) %>
+<%- include("../parties/en‐tête") %>
+		<main><%-
+			include("../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", ],
+			}) %>
+
+			<section class="container">
+				<div class="box">
+					<a href="/annuaire/membres">
+						<span class="icon is-large">
+							<i class="fas fa-user fa-2x"></i>
+						</span>
+						<span>
+							<%= langue.annuaire.chercherMembre %>
+						</span>
+					</a>
+				</div>
+				<div class="box">
+					<a href="/annuaire/organisations">
+						<span class="icon is-large">
+							<i class="fas fa-building fa-2x"></i>
+						</span>
+						<span>
+							<%= langue.annuaire.chercherOrganisation %>
+						</span>
+					</a>
+				</div>
+			</section>
+		</main>
+<%- include("../parties/pied") %>

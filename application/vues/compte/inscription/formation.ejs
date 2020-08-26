@@ -1,0 +1,70 @@
+<%- include("../../parties/tête", { "titre": langue.formulaire.libellés.inscriptionFormation, }) %>
+<%- include("../../parties/en‐tête") %>
+		<main><%-
+			include("../../parties/filAriane", {
+				"liens": [ "accueil", "inscription", "inscriptionFormation", ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.inscriptionFormation %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.inscriptionFormation %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<section class="fiche container">
+				<h1 class="title is-3 has-text-centered">
+					<%= langue.formulaire.invitations.inscriptionFormation %>
+				</h1>
+				<form action="/inscription/formation" method="POST">
+					<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+					<div class="field">
+						<label class="label" for="intituléCourt">
+							<%= langue.formulaire.libellés.intituléCourt %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-font"></i>
+							</span>
+							<input type="text" class="input" name="intituléCourt" id="intituléCourt" required="required" placeholder="<%= langue.formulaire.indications.intituléCourt %>" pattern="<%= global.constantes.formatIntituléVue %>" spellcheck="false" />
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="intituléComplet">
+							<%= langue.formulaire.libellés.intituléComplet %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-font"></i>
+							</span>
+							<input type="text" class="input" name="intituléComplet" id="intituléComplet" required="required" placeholder="<%= langue.formulaire.indications.intituléComplet %>" pattern="<%= global.constantes.formatIntituléVue %>" spellcheck="false" />
+						</div>
+					</div>
+
+					<div class="field is-grouped is-grouped-centered">
+						<div class="control">
+							<button class="button is-link">
+								<%= langue.formulaire.actions.validation %>
+							</button>
+						</div>
+					</div>
+				</form>
+			</section>
+		</main>
+<%- include("../../parties/pied") %>

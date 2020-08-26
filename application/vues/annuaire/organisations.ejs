@@ -1,0 +1,137 @@
+<%- include("../modules/objetForEach") %>
+<%- include("../parties/tête", {
+	"titre": langue.annuaire.titreOrganisations,
+	"CSS": {
+		"checkradio": true,
+		"ribbon": true,
+	},
+}) %>
+<%- include("../parties/en‐tête") %>
+		<main><%-
+			include("../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireOrganisations", ],
+			}) %>
+
+			<section class="fiche container">
+				<h1 class="title is-3 has-text-centered">
+					<%= langue.annuaire.titreOrganisations %>
+				</h1>
+				<form action="/annuaire/organisations" method="GET">
+					<label class="label" for="champ">
+						<%= langue.formulaire.libellés.recherche %>
+					</label>
+
+					<div class="field has-addons">
+						<p class="control">
+							<span class="select">
+								<select name="champ" id="champ">
+									<option value="" selected="selected"></option><%
+
+									langue.formulaire.champsRecherche.organisation.forEach((intituléChamp, idChamp) => { %>
+										<option value="<%= idChamp %>"<% if (formulaireSoumis.champ === idChamp) { %> selected="selected"<% } %>><%= intituléChamp %></option><%
+									}) %>
+								</select>
+							</span>
+						</p>
+						<p class="control is-expanded">
+							<input type="text" class="input" name="recherche" id="recherche" placeholder="<%= langue.formulaire.indications.recherche %>" title="<%= langue.formulaire.aides.recherche %>" value="<%= formulaireSoumis.recherche %>">
+						</p>
+					</div>
+
+					<fieldset class="fieldset">
+						<legend>
+							<%= langue.formulaire.libellés.filtrage %>
+						</legend>
+
+						<div class="field">
+							<label class="label" for="secteurActivité">
+								<%= langue.formulaire.libellés.secteurActivité %>
+							</label>
+							<div class="control">
+								<div class="select">
+									<select name="secteurActivité" id="secteurActivité">
+										<option value="" selected="selected"></option><%
+
+									langue.listes.secteursActivité.forEach((intituléChamp, idChamp) => { %>
+										<option value="<%= idChamp %>"<% if (formulaireSoumis.secteurActivité === idChamp) { %> selected="selected"<% } %>><%= intituléChamp %></option><%
+									}) %>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="field">
+							<label class="label" for="paysSiègeSocial">
+								<%= langue.formulaire.libellés.pays %>
+							</label>
+							<div class="control has-icons-left">
+								<span class="icon is-small is-left">
+									<i class="fas fa-flag"></i>
+								</span>
+								<div class="select">
+									<select name="paysSiègeSocial" id="paysSiègeSocial">
+										<option value="" selected="selected">
+											<%= langue.formulaire.indications.choixPays %>
+										</option>
+										<option value="FR">
+											<%= langue.listes.pays.FR.nom %>
+										</option><%
+
+										langue.listes.continents.forEach(continent => { %>
+											<optgroup label="<%= continent %>"><%
+												langue.listes.pays.forEach((pays, code) => {
+													if (pays.continent === continent) { %>
+														<option value="<%= code %>"><%= pays.nom %></option><%
+													}
+												}) %>
+											</optgroup><%
+										}) %>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="field">
+							<div class="control">
+								<input type="checkbox" class="is-checkradio" name="proposeOffres" id="proposeOffres" value="true"<% if (formulaireSoumis.proposeOffres === "true") { %> checked="checked"<% } %> />
+								<label class="checkbox" for="proposeOffres">
+									<%= langue.formulaire.libellés.proposeOffres %>
+								</label>
+							</div>
+						</div>
+					</fieldset>
+
+					<div class="field">
+						<label class="label has-text-centered" for="ordreTri">
+							<%= langue.formulaire.libellés.tri %>
+						</label>
+						<div class="control has-text-centered">
+							<input type="radio" class="is-checkradio" name="ordreTri" id="alphabétique" value="asc"<% if (formulaireSoumis.ordreTri === "asc" || !formulaireSoumis.ordreTri) { %> checked="checked"<% } %> />
+							<label class="radio" for="alphabétique">
+								<%= langue.formulaire.libellés.triAlphabétique %>
+							</label>
+							<input type="radio" class="is-checkradio" name="ordreTri" id="antiAlphabétique" value="desc"<% if (formulaireSoumis.ordreTri === "desc") { %>  checked="checked"<% } %> />
+							<label class="radio" for="antiAlphabétique">
+								<%= langue.formulaire.libellés.triAntiAlphabétique %>
+							</label>
+						</div>
+					</div>
+
+					<div class="field is-grouped is-grouped-centered">
+						<div class="control">
+							<button class="button is-link">
+								<%= langue.formulaire.actions.validation %>
+							</button>
+						</div>
+					</div>
+				</form>
+			</section>
+
+			<hr class="hr" /><%-
+
+			include("annuaire", {
+				"objets": organisations,
+				"type": "organisation",
+			}) %>
+		</main>
+<%- include("../parties/pied") %>

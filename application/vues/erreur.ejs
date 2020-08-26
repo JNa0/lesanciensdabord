@@ -1,13 +1,22 @@
-<%- include("tête", {
-	"titre": message,
-	"erreur": true,
-}) -%>
-		<h1>
-			<%= message %>
-		</h1>
-		<h2>
-			<%= erreur.status %>
-		</h2>
-		<pre>
-			<%= erreur.stack %>
-		</pre>
+<%- include("parties/tête", { "titre": titre, }) %>
+<%- include("parties/en‐tête") %>
+		<main>
+			<section class="container is-flex flex-centered flex-column">
+				<p class="title is-1 is-spaced has-text-centered">
+					<%= langue.erreurs[titre] || titre %>
+				</p>
+
+				<p class="subtitle is-2 has-text-centered">
+					<%= langue.erreurs[message] || message %>
+				</p><%
+
+				if (titre == "404") { %>
+					<img src="/ressources/images/logotype.svg" style="margin: 2rem; max-height: 50vh;" />
+
+					<p class="subtitle is-3 has-text-centered">
+						<%= langue.erreurs.gorille %>
+					</p><%
+				} %>
+			</section>
+		</main>
+<%- include("parties/pied") %>

@@ -1,0 +1,157 @@
+<%- include("../modules/objetForEach") %>
+<%- include("../parties/tête", {
+	"titre": langue.annuaire.titreOffres,
+	"CSS": { "checkradio": true, },
+	"vueJS": {
+		"vueSelect": true,
+		"script": "vue.catalogue.offres",
+	},
+}) %>
+<%- include("../parties/en‐tête") %>
+		<main><%-
+			include("../parties/filAriane", {
+				"liens": [ "accueil", "offres", ],
+			}) %>
+
+			<section class="fiche container">
+				<h1 class="title is-3 has-text-centered">
+					<%= langue.annuaire.titreOffres %>
+				</h1>
+				<form action="/offres" method="GET">
+					<label class="label" for="champ">
+						<%= langue.formulaire.libellés.recherche %>
+					</label>
+
+					<div class="field has-addons">
+						<p class="control">
+							<span class="select">
+								<select name="champ" id="champ">
+									<option value=""<% if (formulaireSoumis.champ === "") { %> selected="selected"<% } %>></option><%
+
+									langue.formulaire.champsRecherche.offre.forEach((intituléChamp, idChamp) => { %>
+										<option value="<%= idChamp %>"<% if (formulaireSoumis.champ === idChamp) { %> selected="selected"<% } %>><%= intituléChamp %></option><%
+									}) %>
+								</select>
+							</span>
+						</p>
+						<p class="control is-expanded">
+							<input type="text" class="input" name="recherche" id="recherche" placeholder="<%= langue.formulaire.indications.recherche %>" title="<%= langue.formulaire.aides.recherche %>" value="<%= formulaireSoumis.recherche %>" />
+						</p>
+					</div>
+
+					<fieldset class="fieldset">
+						<legend>
+							<%= langue.formulaire.libellés.filtrage %>
+						</legend>
+
+						<div class="field">
+							<label class="label" for="typeEmploi">
+								<%= langue.formulaire.libellés.typeEmploi %>
+							</label>
+							<div class="control">
+								<div class="select">
+									<select name="typeEmploi" id="typeEmploi">
+										<option value=""<% if (formulaireSoumis.typeEmploi === "") { %> selected="selected"<% } %>></option><%
+
+										langue.travail.typesEmploi.forEach((typeEmploi, clé) => { %>
+											<option value="<%= clé %>"<% if (formulaireSoumis.typeEmploi === clé) { %> selected="selected"<% } %>><%= typeEmploi.intituléCapitalisé %></option><%
+										}) %>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<label class="label">
+							<%= langue.formulaire.libellés.organisation %>
+						</label>
+						<div class="field has-addons">
+							<div class="control is-expanded">
+								<v-select label="raisonSociale" :reduce="organisation => organisation.nomUtilisateur" :filterable="false" :options="organisations" @input="définirOrganisation($event)" @search="requesterOrganisations">
+									<template slot="no-options">
+										<%= langue.formulaire.indications.saisieRecherche %>
+									</template>
+
+									<template slot="option" slot-scope="organisation">
+										<div class="d-center">
+											<img :src="organisation.logotype.adresse" /> 
+											{{ organisation.raisonSociale }}
+										</div>
+									</template>
+
+									<template slot="selected-option" slot-scope="organisation">
+										<div class="selected d-center">
+											<img :src="organisation.logotype.adresse" /> 
+											{{ organisation.raisonSociale }}
+										</div>
+									</template>
+								</v-select>
+							</div>
+							<input type="text" name="organisation" id="organisation" :value="organisation" style="display: none;" />
+						</div>
+
+						<div class="field">
+							<label class="label" for="pays">
+								<%= langue.formulaire.libellés.pays %>
+							</label>
+							<div class="control has-icons-left">
+								<span class="icon is-small is-left">
+									<i class="fas fa-flag"></i>
+								</span>
+								<div class="select">
+									<select name="pays" id="pays">
+										<option value="" selected="selected">
+											<%= langue.formulaire.indications.choixPays %>
+										</option>
+										<option value="FR">
+											<%= langue.listes.pays.FR.nom %>
+										</option><%
+
+										langue.listes.continents.forEach(continent => { %>
+											<optgroup label="<%= continent %>"><%
+												langue.listes.pays.forEach((pays, code) => {
+													if (pays.continent === continent) { %>
+														<option value="<%= code %>"><%= pays.nom %></option><%
+													}
+												}) %>
+											</optgroup><%
+										}) %>
+									</select>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+
+					<div class="field">
+						<label class="label has-text-centered" for="ordreTri">
+							<%= langue.formulaire.libellés.tri %>
+						</label>
+						<div class="control has-text-centered">
+							<input type="radio" class="is-checkradio" name="ordreTri" id="alphabétique" value="asc"<% if (formulaireSoumis.ordreTri === "asc" || !formulaireSoumis.ordreTri) { %> checked="checked"<% } %> />
+							<label class="radio" for="alphabétique">
+								<%= langue.formulaire.libellés.triAlphabétique %>
+							</label>
+							<input type="radio" class="is-checkradio" name="ordreTri" id="antiAlphabétique" value="desc"<% if (formulaireSoumis.ordreTri === "desc") { %>  checked="checked"<% } %> />
+							<label class="radio" for="antiAlphabétique">
+								<%= langue.formulaire.libellés.triAntiAlphabétique %>
+							</label>
+						</div>
+					</div>
+
+					<div class="field is-grouped is-grouped-centered">
+						<div class="control">
+							<button class="button is-link">
+								<%= langue.formulaire.actions.validation %>
+							</button>
+						</div>
+					</div>
+				</form>
+			</section>
+
+			<hr class="hr" /><%-
+
+			include("annuaire", {
+				"objets": offres,
+				"type": "offre",
+			}) %>
+		</main>
+<%- include("../parties/pied") %>

@@ -1,0 +1,91 @@
+<%- include("../../parties/tête", { "titre": langue.formulaire.libellés.inscription, }) %>
+<%- include("../../parties/en‐tête") %>
+		<main><%-
+			include("../../parties/filAriane", {
+				"liens": [ "accueil", "inscription", ],
+			}) %>
+
+			<section class="container"><%
+				if (!session.estConnecté) { %>
+					<div class="box">
+						<a href="/inscription/membre">
+							<span class="icon is-large">
+								<i class="fas fa-user fa-2x"></i>
+							</span>
+							<span>
+								<%= langue.formulaire.actions.inscription %>
+							</span>
+						</a>
+					</div><%
+				}
+
+				if (session.estConnecté) { %>
+					<div class="box">
+						<a href="/inscription/organisation">
+							<span class="icon is-large">
+								<i class="fas fa-building fa-2x"></i>
+							</span>
+							<span>
+								<%= langue.formulaire.actions.créationOrganisation %>
+							</span>
+						</a>
+					</div>
+
+					<div class="box">
+						<a href="/inscription/service">
+							<span class="icon is-large">
+								<i class="fas fa-map-marker-alt fa-2x"></i>
+							</span>
+							<span>
+								<%= langue.formulaire.actions.créationService %>
+							</span>
+						</a>
+					</div>
+
+					<div class="box">
+						<a href="/inscription/offre">
+							<span class="icon is-large">
+								<i class="fas fa-file-alt fa-2x"></i>
+							</span>
+							<span>
+								<%= langue.formulaire.actions.créationOffre %>
+							</span>
+						</a>
+					</div>
+
+					<div class="box">
+						<a href="/inscription/formation">
+							<span class="icon is-large">
+								<i class="fas fa-graduation-cap fa-2x"></i>
+							</span>
+							<span>
+								<%= langue.formulaire.actions.créationFormation %>
+							</span>
+						</a>
+					</div>
+
+					<div class="box">
+						<a href="/inscription/établissement">
+							<span class="icon is-large">
+								<i class="fas fa-school fa-2x"></i>
+							</span>
+							<span>
+								<%= langue.formulaire.actions.créationÉtablissement %>
+							</span>
+						</a>
+					</div>
+
+					<div class="box">
+						<a href="/inscription/institution">
+							<span class="icon is-large">
+								<i class="fas fa-university fa-2x"></i>
+							</span>
+							<span>
+								<%= langue.formulaire.actions.créationInstitution %>
+							</span>
+						</a>
+					</div><%
+				} %>
+			</section>
+		</main>
+<%- include("../../parties/pied") %>

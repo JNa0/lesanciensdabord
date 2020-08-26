@@ -1,0 +1,156 @@
+<%- include("../../parties/tête", {
+	"titre": langue.formulaire.libellés.inscriptionÉtablissement,
+	"vueJS": {
+		"vueSelect": true,
+		"script": "vue.inscription.établissement",
+	},
+}) %>
+<%- include("../../parties/en‐tête") %>
+		<main><%-
+			include("../../parties/filAriane", {
+				"liens": [ "accueil", "inscription", "inscriptionÉtablissement", ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.inscriptionÉtablissement %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.inscriptionÉtablissement %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<section class="fiche container">
+				<h1 class="title is-3 has-text-centered">
+					<%= langue.formulaire.invitations.inscriptionÉtablissement %>
+				</h1>
+				<form action="/inscription/établissement" method="POST">
+					<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+					<div class="field">
+						<label class="label" for="nom">
+							<%= langue.formulaire.libellés.nom %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-font"></i>
+							</span>
+							<input type="text" class="input" name="nom" id="nom" required="required" placeholder="<%= langue.formulaire.indications.nom %>" pattern="<%= global.constantes.formatIntituléVue %>" spellcheck="false" />
+						</div>
+					</div>
+
+					<label class="label">
+						<%= langue.formulaire.libellés.institution %>
+					</label>
+					<div class="field has-addons">
+						<div class="control is-expanded">
+							<v-select label="nom" :reduce="institution => institution._id" :filterable="false" :options="institutions" @input="définirInstitution($event)" @search="requesterInstitutions">
+								<template slot="no-options">
+									<%= langue.formulaire.indications.saisieRecherche %>
+								</template>
+
+								<template slot="option" slot-scope="institution">
+									<div class="d-center">
+										{{ institution.nom }}
+									</div>
+								</template>
+
+								<template slot="selected-option" slot-scope="institution">
+									<div class="selected d-center">
+										{{ institution.nom }}
+									</div>
+								</template>
+							</v-select>
+						</div>
+						<div class="control">
+							<a href="/inscription/institution" class="button is-info" target="_blank">
+								<%= langue.formulaire.actions.créationInstitution %>
+							</a>
+						</div>
+						<input type="text" name="institution" id="institution" required="required" :value="institution" style="display: none;" />
+					</div>
+
+					<fieldset class="fieldset">
+						<legend>
+							<%= langue.formulaire.libellés.localisation %>
+						</legend>
+
+						<div class="field">
+							<label class="label" for="ville">
+								<%= langue.formulaire.libellés.ville %>
+							</label>
+							<div class="control has-icons-left">
+								<span class="icon is-small is-left">
+									<i class="fas fa-city"></i>
+								</span>
+								<input type="text" class="input" name="ville" id="ville" required="required" placeholder="<%= langue.formulaire.indications.ville %>" pattern="<%= global.constantes.formatNomVue %>" />
+							</div>
+						</div>
+
+						<div class="field">
+							<label class="label" for="codePostal">
+								<%= langue.formulaire.libellés.codePostal %>
+							</label>
+							<div class="control has-icons-left">
+								<span class="icon is-small is-left">
+									<i class="fas fa-map-marker-alt"></i>
+								</span>
+								<input type="text" class="input" name="codePostal" id="codePostal" required="required" placeholder="<%= langue.formulaire.indications.codePostal %>" pattern="<%= global.constantes.formatCodePostalVue %>" />
+							</div>
+						</div>
+
+						<div class="field">
+							<label class="label" for="pays">
+								<%= langue.formulaire.libellés.pays %>
+							</label>
+							<div class="control has-icons-left">
+								<span class="icon is-small is-left">
+									<i class="fas fa-flag"></i>
+								</span>
+								<div class="select">
+									<select name="pays" id="pays" required="required">
+										<option value="" selected="selected">
+											<%= langue.formulaire.indications.choixPays %>
+										</option>
+										<option value="FR" selected="selected">
+											<%= langue.listes.pays.FR.nom %>
+										</option><%
+
+										langue.listes.continents.forEach(continent => { %>
+											<optgroup label="<%= continent %>"><%
+												langue.listes.pays.forEach((pays, code) => {
+													if (pays.continent === continent) { %>
+														<option value="<%= code %>"><%= pays.nom %></option><%
+													}
+												}) %>
+											</optgroup><%
+										}) %>
+									</select>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+
+					<div class="field is-grouped is-grouped-centered">
+						<div class="control">
+							<button class="button is-link">
+								<%= langue.formulaire.actions.validation %>
+							</button>
+						</div>
+					</div>
+				</form>
+			</section>
+		</main>
+<%- include("../../parties/pied") %>

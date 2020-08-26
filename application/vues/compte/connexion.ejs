@@ -1,0 +1,72 @@
+<%- include("../parties/tête", { "titre": langue.formulaire.libellés.connexion, }) %>
+<%- include("../parties/en‐tête") %>
+		<main><%-
+			include("../parties/filAriane", {
+				"liens": [ "accueil", "connexion", ],
+			}) %><%
+
+			if (locals.connexionÉchouée) { %>
+				<div class="notification is-danger">
+					<p>
+						<%= langue.formulaire.infirmations.connexion %>
+					</p>
+				</div><%
+			} %>
+
+			<section class="container">
+				<h1 class="title is-3 has-text-centered">
+					<%= langue.formulaire.invitations.connexion %>
+				</h1>
+				<form action="/connexion" method="POST">
+					<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" /><%
+
+					if (locals.vers) { %>
+						<input type="hidden" name="vers" value="<%= vers %>" /><%
+					} %>
+
+					<div class="field">
+						<label class="label" for="nomUtilisateur">
+							<%= langue.formulaire.libellés.nomUtilisateur %>
+						</label>
+						<div class="control has-icons-left has-icons-right">
+							<input type="text" class="input" name="nomUtilisateur" id="nomUtilisateur" required="required" placeholder="<%= langue.formulaire.indications.nomUtilisateur %>" spellcheck="false" />
+							<span class="icon is-small is-left">
+								<i class="fas fa-user"></i>
+							</span>
+							<%#
+							<span class="icon is-small is-right">
+								<i class="fas fa-check"></i>
+							</span>
+							%>
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="motDePasse">
+							<%= langue.formulaire.libellés.motDePasse %>
+						</label>
+						<div class="control has-icons-left has-icons-right">
+							<input type="password" class="input" name="motDePasse" id="motDePasse" required="required" placeholder="<%= langue.formulaire.indications.motDePasse %>" spellcheck="false" />
+							<span class="icon is-small is-left">
+								<i class="fas fa-lock"></i>
+							</span>
+						</div>
+					</div>
+
+					<div class="field is-grouped is-grouped-centered">
+						<div class="control">
+							<button class="button is-link">
+								<%= langue.formulaire.actions.validation %>
+							</button>
+						</div>
+					</div>
+				</form>
+				<hr class="hr" />
+				<div class="section has-text-centered">
+					<a class="button is-primary" href="/inscription/membre">
+						<%= langue.formulaire.actions.inscription %>
+					</a>
+				</div>
+			</section>
+		</main>
+<%- include("../parties/pied") %>

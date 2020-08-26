@@ -1,0 +1,78 @@
+<%- include("../../../modules/objetForEach") %>
+<%- include("../../../parties/tête", { "titre": organisation.raisonSociale, }) %>
+<%- include("../../../parties/en‐tête") %>
+		<main><%-
+			include("../../../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireOrganisations", { "adresse": "/organisation/" + organisation.nomUtilisateur, "intitulé": organisation.raisonSociale, }, { "adresse": "/organisation/" + organisation.nomUtilisateur + "/modifier", "intitulé": langue.filAriane.modification, }, ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.modificationOrganisation %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.modificationOrganisation %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<div class="bloc"><%-
+				include("organisation-navigation", { "page": "compte", }) %>
+
+				<section class="fiche container">
+					<form action="<%= URL.pathname %>" method="POST">
+						<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+						<div class="bloc">
+							<h1 class="title tite-2">
+								<%= langue.fiche.compte %>
+							</h1>
+
+							<div class="field">
+								<label class="label" for="nomUtilisateur">
+									<%= langue.formulaire.libellés.nomUtilisateur %>
+								</label>
+								<div class="control has-icons-left">
+									<span class="icon is-small is-left">
+										<i class="fas fa-font"></i>
+									</span>
+									<input type="text" class="input" name="nomUtilisateur" id="nomUtilisateur" required="required"<% if (!modificationComplète) { %> disabled="disabled"<% } %> placeholder="<%= langue.formulaire.indications.nomUtilisateur %>" pattern="<%= global.constantes.formatNomUtilisateurVue %>" spellcheck="false" value="<%= organisation.nomUtilisateur %>" />
+								</div>
+							</div>
+						</div>
+
+						<div class="bloc has-text-centered">
+							<button type="submit" class="button is-medium is-success" type="submit">
+								<%= langue.formulaire.actions.validationModification %>
+							</button>
+						</div>
+					</form><%
+
+					if (suppression) { %>
+						<hr class="hr" />
+
+						<form action="/organisation/<%= organisation.nomUtilisateur %>/supprimer" method="POST">
+							<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+							<div class="is-flex-centered">
+								<button class="button is-danger">
+									<%= langue.formulaire.actions.suppressionPage %>
+								</button>
+							</div>
+						</form><%
+					} %>
+				</section>
+			</div>
+		</main>
+<%- include("../../../parties/pied") %>

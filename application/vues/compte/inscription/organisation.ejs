@@ -1,0 +1,139 @@
+<%- include("../../parties/tête", { "titre": langue.formulaire.libellés.inscriptionOrganisation, }) %>
+<%- include("../../parties/en‐tête") %>
+		<main><%-
+			include("../../parties/filAriane", {
+				"liens": [ "accueil", "inscription", "inscriptionOrganisation", ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.inscriptionOrganisation %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.inscriptionOrganisation %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<section class="fiche container">
+				<h1 class="title is-3 has-text-centered">
+					<%= langue.formulaire.invitations.inscriptionOrganisation %>
+				</h1>
+				<form action="/inscription/organisation" method="POST">
+					<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+					<div class="field">
+						<label class="label" for="raisonSociale">
+							<%= langue.formulaire.libellés.raisonSociale %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-font"></i>
+							</span>
+							<input type="text" class="input" name="raisonSociale" id="raisonSociale" required="required" placeholder="<%= langue.formulaire.indications.raisonSociale %>" pattern="<%= global.constantes.formatIntituléVue %>" spellcheck="false" />
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label" for="secteurActivité">
+							<%= langue.formulaire.libellés.secteurActivité %>
+						</label>
+						<div class="control has-icons-left">
+							<span class="icon is-small is-left">
+								<i class="fas fa-industry"></i>
+							</span>
+							<div class="select">
+								<select name="secteurActivité" id="secteurActivité" required="required">
+									<option value="" selected="selected"></option><%
+
+								langue.listes.secteursActivité.forEach((intituléChamp, idChamp) => { %>
+									<option value="<%= idChamp %>"><%= intituléChamp %></option><%
+								}) %>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<fieldset class="fieldset">
+						<legend>
+							<%= langue.formulaire.libellés.siègeSocial %>
+						</legend>
+
+						<div class="field">
+							<label class="label" for="villeSiègeSocial">
+								<%= langue.formulaire.libellés.ville %>
+							</label>
+							<div class="control has-icons-left">
+								<span class="icon is-small is-left">
+									<i class="fas fa-city"></i>
+								</span>
+								<input type="text" class="input" name="villeSiègeSocial" id="villeSiègeSocial" required="required" placeholder="<%= langue.formulaire.indications.ville %>" pattern="<%= global.constantes.formatNomVue %>" />
+							</div>
+						</div>
+
+						<div class="field">
+							<label class="label" for="codePostalSiègeSocial">
+								<%= langue.formulaire.libellés.codePostal %>
+							</label>
+							<div class="control has-icons-left">
+								<span class="icon is-small is-left">
+									<i class="fas fa-map-marker-alt"></i>
+								</span>
+								<input type="text" class="input" name="codePostalSiègeSocial" id="codePostalSiègeSocial" required="required" placeholder="<%= langue.formulaire.indications.codePostal %>" pattern="<%= global.constantes.formatCodePostalVue %>" />
+							</div>
+						</div>
+
+						<div class="field">
+							<label class="label" for="paysSiègeSocial">
+								<%= langue.formulaire.libellés.pays %>
+							</label>
+							<div class="control has-icons-left">
+								<span class="icon is-small is-left">
+									<i class="fas fa-flag"></i>
+								</span>
+								<div class="select">
+									<select name="paysSiègeSocial" id="paysSiègeSocial" required="required">
+										<option value="" selected="selected">
+											<%= langue.formulaire.indications.choixPays %>
+										</option>
+										<option value="FR">
+											<%= langue.listes.pays.FR.nom %>
+										</option><%
+
+										langue.listes.continents.forEach(continent => { %>
+											<optgroup label="<%= continent %>"><%
+												langue.listes.pays.forEach((pays, code) => {
+													if (pays.continent === continent) { %>
+														<option value="<%= code %>"><%= pays.nom %></option><%
+													}
+												}) %>
+											</optgroup><%
+										}) %>
+									</select>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+
+					<div class="field is-grouped is-grouped-centered">
+						<div class="control">
+							<button class="button is-link">
+								<%= langue.formulaire.actions.validation %>
+							</button>
+						</div>
+					</div>
+				</form>
+			</section>
+		</main>
+<%- include("../../parties/pied") %>

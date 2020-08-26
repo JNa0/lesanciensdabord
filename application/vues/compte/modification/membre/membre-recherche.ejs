@@ -1,0 +1,143 @@
+<%- include("../../../modules/objetForEach") %>
+<%- include("../../../parties/tête", {
+	"titre": membre.nomComplet,
+	"vueJS": {
+		"vueSelect": true,
+		"vueCalendar": true,
+		"script": "vue.modification.membre.recherche",
+	},
+}) %>
+<%- include("../../../parties/en‐tête") %>
+		<main><%-
+			include("../../../parties/filAriane", {
+				"liens": [ "accueil", "annuaire", "annuaireMembres", { "adresse": "/membre/" + membre.nomUtilisateur, "intitulé": membre.nomComplet, }, { "adresse": "/membre/" + membre.nomUtilisateur + "/modifier", "intitulé": langue.filAriane.modification, }, ],
+			}) %><%
+
+			if (locals.résultat) {
+				if (locals.résultat.validé) { %>
+					<div class="notification is-success">
+						<p>
+							<%= langue.formulaire.confirmations.modificationMembre %>
+						</p>
+					</div><%
+				}
+
+				else { %>
+					<div class="notification is-danger">
+						<p>
+							<%= langue.formulaire.infirmations.modificationMembre %>
+						</p>
+						<p>
+							<%= langue.erreurs?.[locals.résultat.erreur] ?? langue.erreurs["ERREUR_INCONNUE"] %>
+						</p>
+					</div><%
+				}
+			} %>
+
+			<div class="bloc"><%-
+				include("membre-navigation", { "page": "recherche", }) %>
+
+				<section class="fiche container">
+					<form action="<%= URL.pathname %>" method="POST" data-recherche="<%= JSON.stringify(membre.recherche) %>" data-domaines="<%= JSON.stringify(Object.entries(langue.listes.domaines).map(([ clé, domaine, ]) => (function (domaine) { domaine.idDomaine = clé; return domaine })(domaine)).sort((a, b) => a.intitulé <= b.intitulé ? -1 : 1)) %>">
+						<input type="hidden" name="_csrf" value="<%= jetonCSRF %>" />
+
+						<div class="bloc" id="recherche">
+							<h1 class="title title-2">
+								<%= langue.fiche.recherche %>
+							</h1>
+							<div class="field">
+								<label class="label" for="typeEmploi">
+									<%= langue.formulaire.libellés.typeEmploi %>
+								</label>
+								<div class="control has-icons-left">
+									<span class="icon is-small is-left">
+										<i class="fas fa-signature"></i>
+									</span>
+									<div class="select">
+										<select name="typeEmploi" id="typeEmploi" v-model="typeEmploi" data-type-emploi="<%= membre.recherche.typeEmploi || "" %>">
+											<option value=""><%= langue.formulaire.libellés.nonRecherche %></option><%
+											langue.travail.typesEmploi.forEach((typeEmploi, clé) => { %>
+												<option value="<%= clé %>"><%= typeEmploi.intituléCapitalisé %></option><%
+											}) %>
+										</select>
+									</div>
+								</div>
+							</div>
+
+							<label v-show="this.typeEmploi !== ''" class="label" for="qualitéDurée">
+								<%= langue.formulaire.libellés.durée %>
+							</label>
+							<div v-show="this.typeEmploi !== ''" class="field has-addons">
+								<div class="control has-icons-left">
+									<span class="icon is-small is-left">
+										<i class="fas fa-calendar-alt"></i>
+									</span>
+									<input type="number" class="input" name="quantitéDurée" id="quantitéDurée" pattern="<%= global.constantes.formatNombreVue %>" min="1" max="40" value="<%= membre.recherche.typeEmploi ? membre.recherche.duréeEmploi.quantité : "" %>" />
+								</div>
+								<div class="control has-icons-left is-expanded">
+									<span class="icon is-small is-left">
+										<i class="fas fa-calendar-week"></i>
+									</span>
+									<div class="select">
+										<select name="qualitéDurée" id="qualitéDurée">
+											<option value=""<% if (!membre.recherche.typeEmploi) { %> selected="selected"<% } %>></option><%
+											langue.travail.duréesEmploi.forEach((duréeEmploi, clé) => { %>
+												<option value="<%= clé %>"<% if (membre.recherche.typeEmploi && membre.recherche.duréeEmploi.qualité === clé) { %> selected="selected"<% } %>><%= duréeEmploi.intituléCapitalisé %></option><%
+											}) %>
+										</select>
+									</div>
+								</div>
+							</div>
+
+							<div v-show="this.typeEmploi !== ''" class="field">
+								<label class="label" for="périodeEmploi">
+									<%= langue.formulaire.libellés.périodeEmploi %>
+								</label>
+								<div class="control has-icons-left">
+									<span class="icon is-small is-left">
+										<i class="fas fa-calendar-alt"></i>
+									</span>
+									<v-date-picker mode="range" v-model="intervalleEmploi" :min-date="dateMinimaleEmploi" :max-date="dateMaximaleEmploi" :input-props="{}" color="teal" locale="<%= langue.langue.code %>">
+										<input type="text" class="input" name="périodeEmploi" id="périodeEmploi" required="required" placeholder="<%= langue.formulaire.indications.périodeEmploi %>" pattern="<%= global.constantes.formatPériodeVue %>" slot-scope="{ inputProps, inputEvents, }" v-bind="inputProps" v-on="inputEvents" />
+									</v-date-picker>
+								</div>
+							</div>
+
+							<div v-show="this.typeEmploi !== ''" class="field">
+								<label class="label" for="domaines">
+									<%= langue.formulaire.libellés.vosDomaines %>
+								</label>
+								<div class="control">
+									<v-select id="sélectionDomaine" label="intituléCapitalisé" v-model="domainesSélectionnés" multiple :options="domainesFiltrés" @search="chercherDomaines" @input="filtrerDomaines">
+										<template slot="no-options">
+											<%= langue.formulaire.indications.saisieRecherche %>
+										</template>
+
+										<template slot="option" slot-scope="domaine">
+											<div class="d-center">
+												{{ domaine.intituléCapitalisé }}
+											</div>
+										</template>
+
+										<template slot="selected-option" slot-scope="domaine">
+											<div class="selected d-center">
+												{{ domaine.intituléCapitalisé }}
+											</div>
+										</template>
+									</v-select>
+
+									<input type="text" name="domaines" id="domaines" ref="domaines" :value="domainesSélectionnés.map(domaine => domaine.idDomaine).join(',')" style="display: none;" />
+								</div>
+							</div>
+						</div>
+
+						<div class="bloc has-text-centered">
+							<button type="submit" class="button is-medium is-success" type="submit">
+								<%= langue.formulaire.actions.validationModification %>
+							</button>
+						</div>
+					</form>
+				</section>
+			</div>
+		</main>
+<%- include("../../../parties/pied") %>

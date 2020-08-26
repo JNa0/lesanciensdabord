@@ -1,0 +1,31 @@
+
+					<div class="card carte has-ribbon-bottom">
+						<div class="card-image">
+							<figure class="image organisation">
+								<img src="<%= organisation.logotype.adresse %>" alt="<%= false && organisation.logotype.existe ? (langue.fiche.logotypeDe + " " + organisation.nomComplet) : langue.fiche.sansLogotype %>" />
+							</figure>
+						</div>
+						<div class="card-content">
+							<p class="title is-4">
+								<a href="/organisation/<%= organisation.nomUtilisateur %>">
+									<%= organisation.raisonSociale %>
+								</a>
+							</p><%
+
+							if (organisation.secteurActivité) { %>
+								<p class="subtitle is-4">
+									<%= langue.listes.secteursActivité[organisation.secteurActivité] %>
+								</p><%
+							}
+
+							if (organisation.effectif) { %>
+								<p class="subtitle is-5">
+									<%= organisation.effectif %> <%= langue.fiche.salariés %>
+								</p><%
+							} %>
+						</div><%
+
+						if (organisation.nombreOffres > 0) { %>
+							<div class="ribbon is-medium is-light"><%= organisation.nombreOffres %> <%= langue.annuaire.offres %></div><%
+						} %>
+					</div>
